@@ -1,0 +1,48 @@
+body {
+	background: #CCC;
+	font-family: Verdana;
+	color: #333;
+}
+#cancan {
+	margin-top: 40px;
+}
+#canvas0 {
+	border-color: #333;
+	border-width: 4px;
+	border-style: solid;
+}
+#foot {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.center {
+	position: relative;
+	width: 1200px;
+	left: 50%;
+	margin-left: -600px;
+}
+.frontlink {
+	position: relative;
+	width: 500px;
+	left: 50%;
+	margin-left: -100px;
+	margin-top: 20px;
+}
+
+a:link    {
+	color:#333;
+	text-decoration:none;
+}
+a:visited {
+	color:#333;
+	text-decoration:none;
+}
+a:hover   {
+	color:#000;
+	text-decoration:none;
+}
+a:active  {
+	color:#000;
+	text-decoration:none;
+}
+
