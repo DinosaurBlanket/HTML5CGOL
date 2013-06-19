@@ -1,13 +1,13 @@
 body {
 	background: #CCC;
 	font-family: Verdana;
-	color: #333;
+	color: #222;
 }
 #cancan {
 	margin-top: 40px;
 }
 #canvas0 {
-	border-color: #333;
+	border-color: #222;
 	border-width: 4px;
 	border-style: solid;
 }
@@ -17,9 +17,9 @@ body {
 }
 .center {
 	position: relative;
-	width: 1200px;
+	width: 800px;
 	left: 50%;
-	margin-left: -600px;
+	margin-left: -400px;
 }
 .frontlink {
 	position: relative;
