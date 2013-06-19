@@ -12,6 +12,12 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
+var initialpattern = [
+	247, 307, 367
+];
+for (var i in initialpattern) cells[ initialpattern[i] ] = 1;
+
+
 function loop() {
 	console.log("generation : " + generation);
 	//to what cells does each live cell neighbor?
@@ -54,30 +60,6 @@ function loop() {
 	generation++;
 	window.setTimeout(loop, 1000);
 }
-
-
-function blitpattern(x, y, source) {
-	for (var i=0; i<source.length; i++) {
-		for (var j=0; j<source[i].length; j++) {
-			cells[ (y+i)*pitch + x + source[i][j] ] = 1;
-		}
-	}
-}
-
-gosperglidergun = [
-	[24], 
-	[22, 24], 
-	[12, 13, 20, 21, 34, 35], 
-	[11, 15, 20, 21, 34, 35], 
-	[ 0,  1, 10, 16, 20, 21], 
-	[ 0,  1, 10, 14, 16, 17, 22, 24], 
-	[10, 16, 24], 
-	[11, 15], 
-	[12, 13] 
-]
-
-
-blitpattern(20, 20, gosperglidergun);
 
 loop();
 
