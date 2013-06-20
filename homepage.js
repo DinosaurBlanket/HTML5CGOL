@@ -5,9 +5,9 @@ var c0 = document.getElementById("canvas0").getContext("2d");
 var width = 800;
 var height = 600;
 var cellsize = 4;
-var timeout = 80;
+var timeout = 60;
 var generation = 0;
-var offcolor = "#DDD", oncolor = "#444";
+var offcolor = "#444", oncolor = "#BBB";
 var pitch = width/cellsize;
 
 var cells = [], cursedcells = [], neighborcounts = [];
@@ -42,7 +42,10 @@ function fillcell(i) { c0.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cell
 
 function loop() {
 	//console.log("generation : " + generation);
-	
+	/*
+	c0.fillStyle = "rgba(221, 221, 221, 0.5)";
+	c0.fillRect(0,0,width,height);
+	*/
 	while (cursedcells.length) {
 		var cc = cursedcells.pop()
 		cells[cc-pitch  -1] = 1;
@@ -75,14 +78,14 @@ function loop() {
 				//console.log(i + " died");
 			}
 			else {
-				c0.fillStyle = oncolor;
+				c0.fillStyle = neighborcounts[i]==2 ? "#BB4" : "#4BB";
 				fillcell(i);
 				//console.log(i + " lived");
 			}
 		}
 		else if (neighborcounts[i]==3) {
 			cells[i] = 1;
-			c0.fillStyle = oncolor;
+			c0.fillStyle = "#B4B";
 			fillcell(i);
 			//console.log(i + " born");
 		}
@@ -91,20 +94,26 @@ function loop() {
 	for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 	generation++;
 	
-	window.setTimeout(loop, timeout);
 	
+	window.setTimeout(loop, timeout);
 }
 
-gosperglidergun = [
-	[24], 
-	[22, 24], 
-	[12, 13, 20, 21, 34, 35], 
-	[11, 15, 20, 21, 34, 35], 
-	[ 0,  1, 10, 16, 20, 21], 
-	[ 0,  1, 10, 14, 16, 17, 22, 24], 
-	[10, 16, 24], 
-	[11, 15], 
-	[12, 13] 
+var heptominob = [
+	[0,  2,3],
+	[0,1,2],
+	[  1]
+]
+
+var gosperglidergun = [
+	[24],
+	[22,24],
+	[12,13,20,21,34,35],
+	[11,15,20,21,34,35],
+	[ 0, 1,10,16,20,21],
+	[ 0, 1,10,14,16,17,22,24],
+	[10,16,24],
+	[11,15],
+	[12,13]
 ]
 
 function blitpattern(x, y, source) {
@@ -115,7 +124,7 @@ function blitpattern(x, y, source) {
 	}
 }
 
-blitpattern(20, 20, gosperglidergun);
+blitpattern(50, 20, heptominob);
 
 loop();
 

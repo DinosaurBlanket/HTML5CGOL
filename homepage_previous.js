@@ -4,22 +4,57 @@ var c0 = document.getElementById("canvas0").getContext("2d");
 
 var width = 800;
 var height = 600;
-var cellsize = 8;
-var timeout = 40;
+var cellsize = 4;
+var timeout = 60;
 var generation = 0;
-var offcolor = "#CCC", oncolor = "#222";
+var offcolor = "#444", oncolor = "#BBB";
 var pitch = width/cellsize;
 
-var cells = [], neighborcounts = [], arraylength = pitch*(height/cellsize);
+var cells = [], cursedcells = [], neighborcounts = [];
+var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
 	cells[i] = 0;
 	neighborcounts[i] = 0;
 }
 
+var curx, cury, mousedown = 0;
+var curse = function(evt) {
+	var obj = canvas0;
+	var top = 0;
+	var left = 0;
+	while (obj && obj.tagName != "BODY") {
+		top += obj.offsetTop;
+		left += obj.offsetLeft;
+		obj = obj.offsetParent;
+	}
+	curx = evt.clientX - left + window.pageXOffset;
+	cury = evt.clientY - top + window.pageYOffset;
+	if (mousedown) cursedcells.push( Math.floor(cury/cellsize)*pitch + Math.floor(curx/cellsize) );
+}
+canvas0.addEventListener("mousemove", curse, 0)
+canvas0.addEventListener("mousedown", function(evt) {
+	mousedown = 1;
+	curse(evt);
+}, 0);
+canvas0.addEventListener("mouseup",   function(evt) {mousedown = 0}, 0);
+
 function fillcell(i) { c0.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize ) }
 
 function loop() {
 	//console.log("generation : " + generation);
+	/*
+	c0.fillStyle = "rgba(221, 221, 221, 0.5)";
+	c0.fillRect(0,0,width,height);
+	*/
+	while (cursedcells.length) {
+		var cc = cursedcells.pop()
+		cells[cc-pitch  -1] = 1;
+		cells[cc-pitch  -2] = 1;
+		cells[cc-pitch*2-1] = 1;
+		cells[cc-pitch*2-3] = 1;
+		cells[cc-pitch*3-2] = 1;
+		cells[cc-pitch*3-3] = 1;
+	}
 	//to what cells does each live cell neighbor?
 	for (var i=0; i<arraylength; i++) {
 		if (cells[i]) {
@@ -43,14 +78,14 @@ function loop() {
 				//console.log(i + " died");
 			}
 			else {
-				c0.fillStyle = oncolor;
+				c0.fillStyle = neighborcounts[i]==2 ? "#BB4" : "#4BB";
 				fillcell(i);
 				//console.log(i + " lived");
 			}
 		}
 		else if (neighborcounts[i]==3) {
 			cells[i] = 1;
-			c0.fillStyle = oncolor;
+			c0.fillStyle = "#B4B";
 			fillcell(i);
 			//console.log(i + " born");
 		}
@@ -58,9 +93,28 @@ function loop() {
 	//reset
 	for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 	generation++;
+	
+	
 	window.setTimeout(loop, timeout);
 }
 
+var heptominob = [
+	[0,  2,3],
+	[0,1,2],
+	[  1]
+]
+
+var gosperglidergun = [
+	[24],
+	[22,24],
+	[12,13,20,21,34,35],
+	[11,15,20,21,34,35],
+	[ 0, 1,10,16,20,21],
+	[ 0, 1,10,14,16,17,22,24],
+	[10,16,24],
+	[11,15],
+	[12,13]
+]
 
 function blitpattern(x, y, source) {
 	for (var i=0; i<source.length; i++) {
@@ -70,21 +124,9 @@ function blitpattern(x, y, source) {
 	}
 }
 
-gosperglidergun = [
-	[24], 
-	[22, 24], 
-	[12, 13, 20, 21, 34, 35], 
-	[11, 15, 20, 21, 34, 35], 
-	[ 0,  1, 10, 16, 20, 21], 
-	[ 0,  1, 10, 14, 16, 17, 22, 24], 
-	[10, 16, 24], 
-	[11, 15], 
-	[12, 13] 
-]
-
-
-blitpattern(20, 20, gosperglidergun);
+blitpattern(50, 20, heptominob);
 
 loop();
+
 
 }//init

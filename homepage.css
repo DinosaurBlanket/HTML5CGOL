@@ -1,15 +1,16 @@
 body {
-	background: #DDD;
+	background: #444;
 	font-family: Verdana;
-	color: #444;
+	color: #BBB;
 }
 #cancan {
 	margin-top: 40px;
 }
 #canvas0 {
-	border-color: #444;
+	border-color: #BBB;
 	border-width: 4px;
 	border-style: solid;
+	cursor: none;
 }
 #foot {
 	padding-top: 10px;
