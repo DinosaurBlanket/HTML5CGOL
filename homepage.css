@@ -1,13 +1,13 @@
 body {
-	background: #CCC;
+	background: #DDD;
 	font-family: Verdana;
-	color: #222;
+	color: #444;
 }
 #cancan {
 	margin-top: 40px;
 }
 #canvas0 {
-	border-color: #222;
+	border-color: #444;
 	border-width: 4px;
 	border-style: solid;
 }
