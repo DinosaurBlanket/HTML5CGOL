@@ -4,7 +4,7 @@ function init() {
 
 var width = 800;
 var height = 600;
-var cellsize = 4;
+var cellsize = 2;
 var timeout = 60;
 var generation = 0;
 var pitch = width/cellsize;
@@ -17,6 +17,7 @@ var colorschemes = [
 	["#F8B", "#B8F", "#88F"],
 ]
 var colorscheme = 0;
+var curcolor = "rgba(220, 220, 220, 0.5)";
 
 
 var thisthing = [
@@ -30,7 +31,7 @@ var heptominob = [
 	"1110",
 	"0100"
 ]
-/*
+
 var gosperglidergun = [
 	[24],
 	[22,24],
@@ -42,7 +43,7 @@ var gosperglidergun = [
 	[11,15],
 	[12,13]
 ]
-*/
+
 var stamp = thisthing;
 
 var cells = [], neighborcounts = [];
@@ -55,9 +56,9 @@ for (var i=0; i<arraylength; i++) {
 function blitpattern(x, y, source) {
 	for (var i=0; i<source.length; i++) {
 		for (var j=0; j<source[i].length; j++) {
-			if (source[i][j] === '1') {
-				cells[ (y)*pitch + pitch*i + (x) + j ] = 1;
-			}
+			if (source[i][j] === '1') cells[ (y)*pitch + pitch*i + (x) + j ] = 1;
+			else if (source[i][j] === '0') ;
+			else cells[ x + y*pitch + i*pitch + source[i][j] ] = 1;
 		}
 	}
 }
@@ -79,7 +80,7 @@ cancan.addEventListener("mousemove", function(evt) {
 	findcur(evt);
 	var c = document.getElementById('canvas1').getContext('2d');
 	c.clearRect( previoucurx*cellsize, previoucury*cellsize, cellsize*stamp[0].length, cellsize*stamp.length);
-	c.fillStyle = "rgba(187, 187, 187, 0.3)";
+	c.fillStyle = curcolor;
 	for (var i=0; i<stamp.length; i++) {
 		for (var j=0; j<stamp[i].length; j++) {
 			if (stamp[i][j] === '1') {
@@ -155,7 +156,7 @@ function loop() {
 	window.setTimeout(loop, timeout);
 }
 
-//blitpattern(50, 20, heptominob);
+blitpattern(50, 20, gosperglidergun);
 
 loop();
 
