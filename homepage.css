@@ -4,13 +4,27 @@ body {
 	color: #BBB;
 }
 #cancan {
+	cursor: none;
+	height: 600px;
 	margin-top: 40px;
 }
 #canvas0 {
 	border-color: #BBB;
 	border-width: 4px;
 	border-style: solid;
-	cursor: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+#canvas1 {
+	border-color: #BBB;
+	border-width: 4px;
+	border-style: solid;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
 }
 #foot {
 	padding-top: 10px;
