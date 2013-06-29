@@ -1,11 +1,14 @@
 /* TO DO
  * 
- * add patterns
- * add play/pause and clear buttons
- * add color and speed sliders
- * add cellsize selector (1,2,4,8)
- * add "copy current cell state as ascii rows of 1s and 0s to the clipboard" button
- * 
+ * play/pause
+ * clear
+ * stamp editor
+ * speed slider
+ * cellsize selector(1,2,4,8)
+ * rgb sliders
+ * * cella
+ * * callb
+ * * cellc
  * 
  */
 
@@ -15,25 +18,37 @@ function init() {
 var width = 800;
 var height = 600;
 var cellsize = 4;
-var timeout = 60;
+var timeout = 100;
 var generation = 0;
 var pitch = width/cellsize;
 
-var backcolor = "#444", trim = "#BBB";
+var backcolor = "#EEE", trim = "#AAA";
 var colorschemes = [
 	//[new, 2neighbor, 3neighbor]
-	["#B4B", "#4BB", "#BB4"],
+	["#A3A", "#3AA", "#AA3"],
 	["#A6D", "#6AD", "#6DA"],
 	["#F8B", "#B8F", "#88F"],
 ]
-var colorscheme = 0;
-var curcolor = "rgba(220, 220, 220, 0.5)";
+var colorscheme = 1;
+var curcolor = "rgba(40, 40, 40, 0.5)";
 
 
 var thisthing = [
 	"110",
 	"101",
 	"011"
+]
+
+var plus = [
+	"010",
+	"101",
+	"010"
+]
+
+var box = [
+	"111",
+	"101",
+	"111"
 ]
 
 var heptominob = [
@@ -54,7 +69,7 @@ var gosperglidergun = [
 	[12,13]
 ]
 
-var stamp = thisthing;
+var stamp = box;
 
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
@@ -168,6 +183,9 @@ function loop() {
 
 //blitpattern(50, 20, gosperglidergun);
 
+var c = document.getElementById('canvas0').getContext('2d');
+c.fillStyle = backcolor;
+c.fillRect(0, 0, width, height);
 loop();
 
 

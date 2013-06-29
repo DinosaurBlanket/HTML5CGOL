@@ -1,0 +1,57 @@
+body {
+	background: #AAA;
+	font-family: Verdana;
+	color: #EEE;
+}
+#cancan {
+	cursor: none;
+	height: 600px;
+	margin-top: 40px;
+}
+#canvas0 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+#canvas1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+#foot {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.center {
+	position: relative;
+	width: 800px;
+	left: 50%;
+	margin-left: -400px;
+}
+.frontlink {
+	position: relative;
+	width: 500px;
+	left: 50%;
+	margin-left: -100px;
+	margin-top: 20px;
+}
+
+a:link    {
+	color: #EEE;
+	text-decoration:none;
+}
+a:visited {
+	color: #EEE;
+	text-decoration:none;
+}
+a:hover   {
+	color: #FFF;
+	text-decoration:none;
+}
+a:active  {
+	color: #FFF;
+	text-decoration:none;
+}
+
