@@ -48,27 +48,99 @@ cancan.addEventListener("mousemove", function(evt) {
 	var c = document.getElementById('stampcanvas').getContext('2d');
 	c.fillStyle = curcolor;
 	findcur(evt);
-	//if (!(mousedown)){
-	c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
-	//}
+	if (!(mousedown)) c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
 	c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 	if (mousedown) {
 		curcoords.push( [cursex,cursey] );
-		for (var i=1; i<cursex-previouscursex; i++) {
-			curcoords.push( [cursex-i, previouscursey] );
-			//c.fillRect( (cursex-i)*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		//moved right
+		if (cursex-previouscursex > 1) {
+			//moved down
+			if (cursey-previouscursey > 1) {
+				//moved farther right than down
+				if (cursex-previouscursex > cursey-previouscursey) {
+					for (var i=1; i < cursex-previouscursex; i++) {
+						curcoords.push( [ cursex-i, cursey - Math.floor( i/(cursey-previouscursey) ) ] );
+						
+						c.fillRect( (cursex-i)*cellsize, (cursey - Math.floor( i/(cursey-previouscursey) ))*cellsize, cellsize, cellsize );
+						
+					}
+				}
+				//did not move farther right than down
+				else {
+					for (var i=1; i < cursey-previouscursey; i++) {
+						curcoords.push( [ cursex - Math.floor( i/(cursex-previouscursex) ), cursey-i ] );
+						
+						c.fillRect( (cursex - Math.floor( i/(cursex-previouscursex) ))*cellsize, (cursey-i)*cellsize, cellsize, cellsize );
+						
+					}
+				}
+			}
+			//moved up
+			else if (previouscursey-cursey > 1) {
+				//moved farther right than up
+				if (cursex-previouscursex > cursey-previouscursey) {
+					for (var i=1; i < cursex-previouscursex; i++) {
+						curcoords.push( [ cursex+i, cursey - Math.floor( i/(cursey-previouscursey) ) ] );
+						
+						c.fillRect( (cursex+i)*cellsize, (cursey - Math.floor( i/(cursey-previouscursey) ))*cellsize, cellsize, cellsize );
+						
+					}
+				}
+				//did not move farther right than up
+				else {
+					for (var i=1; i < cursey-previouscursey; i++) {
+						curcoords.push( [ cursex - Math.floor( i/(cursex-previouscursex) ), cursey+i ] );
+						
+						c.fillRect( (cursex - Math.floor( i/(cursex-previouscursex) ))*cellsize, (cursey+i)*cellsize, cellsize, cellsize );
+						
+					}
+				}
+			}
 		}
-		for (var i=1; i<previouscursex-cursex; i++) {
-			curcoords.push( [cursex+i, previouscursey] );
-			//c.fillRect( (cursex+i)*cellsize, previouscursey*cellsize, cellsize, cellsize );
-		}
-		for (var i=1; i<cursey-previouscursey; i++) {
-			curcoords.push( [previouscursex, cursey - i] );
-			//c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
-		}
-		for (var i=1; i<previouscursey-cursey; i++) {
-			curcoords.push( [previouscursex, cursey + i] );
-			//c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
+		//moved left
+		else if (previouscursex-cursex > 1) {
+			//moved down
+			if (cursey-previouscursey > 1) {
+				//moved farther left than down
+				if (previouscursex-cursex > cursey-previouscursey) {
+					for (var i=1; i < previouscursex-cursex; i++) {
+						curcoords.push( [ cursex+i, cursey - Math.floor( i/(cursey-previouscursey) ) ] );
+						
+						c.fillRect( (cursex+i)*cellsize, (cursey - Math.floor( i/(cursey-previouscursey) ))*cellsize, cellsize, cellsize );
+						
+					}
+				}
+				//did not move farther left than down
+				else {
+					for (var i=1; i < cursey-previouscursey; i++) {
+						curcoords.push( [ cursex + Math.floor( i/(previouscursex-cursex) ), cursey-i ] );
+						
+						c.fillRect( (cursex + Math.floor( i/(cursex-previouscursex) ))*cellsize, (cursey-i)*cellsize, cellsize, cellsize );
+						
+					}
+				}
+			}
+			//moved up
+			else if (previouscursey-cursey > 1) {
+				//moved farther left than up
+				if (previouscursex-cursex > previouscursey-cursey) {
+					for (var i=1; i < previouscursex-cursex; i++) {
+						curcoords.push( [ cursex+i, cursey + Math.floor( i/(previouscursey-cursey) ) ] );
+						
+						c.fillRect( (cursex+i)*cellsize, (cursey + Math.floor( i/(previouscursey-cursey) ))*cellsize, cellsize, cellsize );
+						
+					}
+				}
+				//did not move farther left than up
+				else {
+					for (var i=1; i < previouscursey-cursey; i++) {
+						curcoords.push( [ cursex + Math.floor( i/(previouscursex-cursex) ), cursey+i ] );
+						
+						c.fillRect( (cursex + Math.floor( i/(previouscursex-cursex) ))*cellsize, (cursey+i)*cellsize, cellsize, cellsize );
+						
+					}
+				}
+			}
 		}
 	}
 	previouscursex = cursex;

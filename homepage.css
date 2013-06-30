@@ -1,30 +1,29 @@
 body {
-	background: #444;
+	background: #AAA;
 	font-family: Verdana;
-	color: #BBB;
+	color: #EEE;
 }
 #cancan {
 	cursor: none;
-	height: 600px;
+	height: 660px;
 	margin-top: 40px;
 }
-#canvas0 {
-	border-color: #BBB;
-	border-width: 4px;
-	border-style: solid;
+#gridcanvas {
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 0px;
+	left: 0px;
 	z-index: 0;
 }
-#canvas1 {
-	border-color: #BBB;
-	border-width: 4px;
-	border-style: solid;
+#stampcanvas {
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 0px;
+	left: 0px;
 	z-index: 1;
+}
+#controlcanvas {
+	position: absolute;
+	top: 600px;
+	left: 60px;
 }
 #foot {
 	padding-top: 10px;
@@ -45,19 +44,19 @@ body {
 }
 
 a:link    {
-	color:#333;
+	color: #EEE;
 	text-decoration:none;
 }
 a:visited {
-	color:#333;
+	color: #EEE;
 	text-decoration:none;
 }
 a:hover   {
-	color:#000;
+	color: #FFF;
 	text-decoration:none;
 }
 a:active  {
-	color:#000;
+	color: #FFF;
 	text-decoration:none;
 }
 
