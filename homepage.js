@@ -9,6 +9,7 @@ var width = 800;
 var height = 600;
 var cellsize = 4;
 var timeout = 100;
+flourishlimit = 6;
 var generation = 0;
 var pitch = width/cellsize;
 
@@ -31,7 +32,7 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
-var cursex, cursey, previouscursex, previouscursey, curcoords = [[]], mousedown = 0;
+var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey;
 var findcur = function(evt) {
 	var obj = gridcanvas;
 	var top = 0;
@@ -54,19 +55,20 @@ cancan.addEventListener("mousemove", function(evt) {
 	c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 	if (mousedown) {
 		curcoords.push( [cursex,cursey] );
-		for (var i=1; i<cursex-previouscursex; i++) {
-			curcoords.push( [cursex-i, previouscursey] );
-			//c.fillRect( (cursex-i)*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		///flourish on drag
+		for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
+			curcoords.push( [cursex-i, cursey] );
+			//c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
 		}
-		for (var i=1; i<previouscursex-cursex; i++) {
-			curcoords.push( [cursex+i, previouscursey] );
-			//c.fillRect( (cursex+i)*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
+			curcoords.push( [cursex+i, cursey] );
+			//c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
 		}
-		for (var i=1; i<cursey-previouscursey; i++) {
+		for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
 			curcoords.push( [previouscursex, cursey - i] );
 			//c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
 		}
-		for (var i=1; i<previouscursey-cursey; i++) {
+		for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
 			curcoords.push( [previouscursex, cursey + i] );
 			//c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
 		}
@@ -95,20 +97,20 @@ function loop() {
 		var cc = curcoords.pop();
 		cells[cc[0] + cc[1]*pitch] = 1;
 	}
-	//to what cells does each live cell neighbor?
+	///tick
 	for (var i=0; i<arraylength; i++) {
 		if (cells[i]) {
-			if (i>=pitch) ++neighborcounts[i-pitch];//up
-			if (i<arraylength-pitch) neighborcounts[i+pitch]++;//down
-			if (i%pitch!=0) neighborcounts[i-1]++;//left
-			if (i%pitch!=pitch-1) neighborcounts[i+1]++;//right
-			if (i>=pitch && i%pitch!=0) neighborcounts[i-pitch-1]++;//upleft
-			if (i>=pitch && i%pitch!=pitch-1) neighborcounts[i-pitch+1]++;//upright
-			if (i<arraylength-pitch && i%pitch!=0) neighborcounts[i+pitch-1]++;//downleft
-			if (i<arraylength-pitch && i%pitch!=pitch-1) neighborcounts[i+pitch+1]++;//downright
+			if (i>=pitch) neighborcounts[i-pitch]++;                                 ///up
+			if (i<arraylength-pitch) neighborcounts[i+pitch]++;                      ///down
+			if (i%pitch!=0) neighborcounts[i-1]++;                                   ///left
+			if (i%pitch!=pitch-1) neighborcounts[i+1]++;                             ///right
+			if (i>=pitch && i%pitch!=0) neighborcounts[i-pitch-1]++;                 ///upleft
+			if (i>=pitch && i%pitch!=pitch-1) neighborcounts[i-pitch+1]++;           ///upright
+			if (i<arraylength-pitch && i%pitch!=0) neighborcounts[i+pitch-1]++;      ///downleft
+			if (i<arraylength-pitch && i%pitch!=pitch-1) neighborcounts[i+pitch+1]++;///downright
 		}
 	}
-	//life
+	///tock
 	for (var i=0; i<arraylength; i++) {
 		if (cells[i]){
 			if (neighborcounts[i]<2 || neighborcounts[i]>3) {
@@ -138,7 +140,6 @@ function loop() {
 	window.setTimeout(loop, timeout);
 }
 
-//blitpattern(50, 20, gosperglidergun);
 
 var c = document.getElementById('gridcanvas').getContext('2d');
 c.fillStyle = backcolor;
