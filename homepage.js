@@ -9,7 +9,7 @@ var width = 800;
 var height = 600;
 var cellsize = 4;
 var timeout = 100;
-flourishlimit = 6;
+flourishlimit = 16;
 var generation = 0;
 var pitch = width/cellsize;
 
@@ -26,7 +26,7 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
-var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey, paused;
+var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey, paused, cleanupcursor;
 var findcur = function(evt) {
 	var obj = gridcanvas;
 	var top = 0;
@@ -40,31 +40,32 @@ var findcur = function(evt) {
 	cursey = Math.floor( (evt.clientY - top  + window.pageYOffset)/cellsize );
 }
 stampcanvas.addEventListener("mousemove", function(evt) {
-	var c = document.getElementById('stampcanvas').getContext('2d');
-	c.fillStyle = curcolor;
 	findcur(evt);
-	//if (!(mousedown)){
-	c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
-	//}
-	c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-	if (mousedown) {
-		curcoords.push( [cursex,cursey] );
-		///flourish on drag
-		for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
-			curcoords.push( [cursex-i, cursey] );
-			//c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
-		}
-		for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
-			curcoords.push( [cursex+i, cursey] );
-			//c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
-		}
-		for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
-			curcoords.push( [previouscursex, cursey - i] );
-			//c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
-		}
-		for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
-			curcoords.push( [previouscursex, cursey + i] );
-			//c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
+	if (cursex != previouscursex  ||  cursey != previouscursey) {
+		var c = document.getElementById('stampcanvas').getContext('2d');
+		c.fillStyle = curcolor;
+		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+		if ( cleanupcursor ) c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		else cleanupcursor = 1;
+		if (mousedown) {
+			curcoords.push( [cursex,cursey] );
+			///flourish on drag
+			for (var i=1; i<=cursex-previouscursex && i<flourishlimit; i++) {
+				curcoords.push( [cursex-i, cursey] );
+				if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
+			}
+			for (var i=1; i<=previouscursex-cursex && i<flourishlimit; i++) {
+				curcoords.push( [cursex+i, cursey] );
+				if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
+			}
+			for (var i=1; i<=cursey-previouscursey && i<flourishlimit; i++) {
+				curcoords.push( [previouscursex, cursey - i] );
+				if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
+			}
+			for (var i=1; i<=previouscursey-cursey && i<flourishlimit; i++) {
+				curcoords.push( [previouscursex, cursey + i] );
+				if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
+			}
 		}
 	}
 	previouscursex = cursex;
@@ -72,6 +73,7 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 }, 0);
 stampcanvas.addEventListener("mousedown", function(evt) {
 	mousedown = 1;
+	if (paused) cleanupcursor = 0;
 	findcur(evt);
 	curcoords.push( [ cursex, cursey ] );
 }, 0);
@@ -79,6 +81,8 @@ stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
 controlcanvas.addEventListener("mousedown", function(evt) {
 	if (paused) {
 		paused = 0;
+		var c = document.getElementById('stampcanvas').getContext('2d');
+		c.clearRect(0, 0, width, height);
 		loop();
 	}
 	else paused = 1;
