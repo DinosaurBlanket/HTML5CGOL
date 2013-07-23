@@ -13,18 +13,27 @@
 
 <body onload='init();'>
 	
-	<div class='center' id='cancan'>
+	<div id='cancan' class='center'>
 		<canvas id='gridcanvas' width='800' height='600'>
 			gridcanvas element failed to display
 		</canvas>
 		<canvas id='stampcanvas' width='800' height='600'>
 			stampcanvas element failed to display
 		</canvas>
-		<canvas id='controlcanvas' width='800' height='60'>
-			controlcanvas element failed to display
-		</canvas>
 	</div>
 	
+	<div id='controls' class='center'>
+		<input type="button" class='button' id="pauseButton"   value="play/pause"/>
+		<input type="button" class='button' id="eraseButton"   value="draw/erase"/>
+		<input type="button" class='button' id="vertsymButton" value="vertsym"/>
+		<input type="button" class='button' id="horsymButton"  value="horsym"/>
+		<input type="button" class='button' id="clearButton"   value="clear"/>
+		<input type="button" class='button' id="biggerButton"  value="bigger"/>
+		<input type="button" class='button' id="smallerButton" value="smaller"/>
+		<input type="range" min="0" max="100" value="0" step="10"/>
+		
+	</div>
+
 	<div class='frontlink'>
 		<h4 style="text-align: right;">
 			<a href='mailto:JonArintok@Gmail.com'/>

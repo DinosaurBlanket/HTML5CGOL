@@ -1,5 +1,14 @@
 /* 
  * 
+ * 
+ * ::to do::
+ * toggle erase
+ * toggle vertically symmetrical drawing
+ * toggle horizontally symmetrical drawing
+ * clear
+ * bigger,smaller (get common divisors for width and height)
+ * speed slider
+ * color sliders(4*RGB)
  */
 
 function init() {
@@ -7,16 +16,16 @@ function init() {
 
 var width = 800;
 var height = 600;
-var cellsize = 4;
+var cellsize = 5;
 var timeout = 100;
 flourishlimit = 16;
 var generation = 0;
 var pitch = width/cellsize;
 
 var backcolor = "#EEE", trim = "#AAA";
-	              //[new, 2neighbor, 3neighbor]
-var colorscheme = ["#A6D", "#6AD", "#6DA"]/*["#A3A", "#3AA", "#AA3"]["#F8B", "#B8F", "#88F"]*/;
-var curcolor = "rgba(40, 40, 40, 0.5)";
+	              //[born, 2neighbor, 3neighbor, drawn]
+var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"]/*["#A3A", "#3AA", "#AA3"]["#F8B", "#B8F", "#88F"]*/;
+var curcolor = "rgba(40, 40, 40, 0.4)";
 
 
 var cells = [], neighborcounts = [];
@@ -26,7 +35,7 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
-var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey, paused, cleanupcursor;
+var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey, paused;
 var findcur = function(evt) {
 	var obj = gridcanvas;
 	var top = 0;
@@ -45,24 +54,28 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 		var c = document.getElementById('stampcanvas').getContext('2d');
 		c.fillStyle = curcolor;
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-		if ( cleanupcursor ) c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
-		else cleanupcursor = 1;
+		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
 		if (mousedown) {
 			curcoords.push( [cursex,cursey] );
+			if (paused) {
+				var c = document.getElementById('gridcanvas').getContext('2d');
+				c.fillStyle = colorscheme[3];
+				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+			}
 			///flourish on drag
-			for (var i=1; i<=cursex-previouscursex && i<flourishlimit; i++) {
+			for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
 				curcoords.push( [cursex-i, cursey] );
 				if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
 			}
-			for (var i=1; i<=previouscursex-cursex && i<flourishlimit; i++) {
+			for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
 				curcoords.push( [cursex+i, cursey] );
 				if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
 			}
-			for (var i=1; i<=cursey-previouscursey && i<flourishlimit; i++) {
+			for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
 				curcoords.push( [previouscursex, cursey - i] );
 				if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
 			}
-			for (var i=1; i<=previouscursey-cursey && i<flourishlimit; i++) {
+			for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
 				curcoords.push( [previouscursex, cursey + i] );
 				if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
 			}
@@ -73,12 +86,17 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 }, 0);
 stampcanvas.addEventListener("mousedown", function(evt) {
 	mousedown = 1;
-	if (paused) cleanupcursor = 0;
 	findcur(evt);
 	curcoords.push( [ cursex, cursey ] );
+	if (paused) {
+		var c = document.getElementById('gridcanvas').getContext('2d');
+		c.fillStyle = colorscheme[3];
+		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+	}
 }, 0);
 stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
-controlcanvas.addEventListener("mousedown", function(evt) {
+
+document.getElementById("pauseButton").onclick = function () {
 	if (paused) {
 		paused = 0;
 		var c = document.getElementById('stampcanvas').getContext('2d');
@@ -86,7 +104,7 @@ controlcanvas.addEventListener("mousedown", function(evt) {
 		loop();
 	}
 	else paused = 1;
-}, 0);
+}
 
 function fillcell(i) { 
 	var c = document.getElementById('gridcanvas').getContext('2d');

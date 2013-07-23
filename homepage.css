@@ -4,7 +4,7 @@ body {
 	color: #EEE;
 }
 #cancan {
-	height: 660px;
+	height: 600px;
 	margin-top: 40px;
 }
 #gridcanvas {
@@ -20,11 +20,10 @@ body {
 	left: 0px;
 	z-index: 1;
 }
-#controlcanvas {
-	position: absolute;
-	top: 600px;
-	left: 60px;
+#controls {
+	margin-top: 10px;
 }
+
 #foot {
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -41,6 +40,9 @@ body {
 	left: 50%;
 	margin-left: -100px;
 	margin-top: 20px;
+}
+.button {
+	border-style:none;
 }
 
 a:link    {
