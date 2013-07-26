@@ -18,13 +18,14 @@ function init() {
 var width = 800;
 var height = 600;
 var cellsize = 5;
-var timeout = 100;
 var flourishlimit = 16;
+var timeout = 100;
 var timeoutincrem = 20;
-var maxtimeout = 500;
+var timeoutmax = 500;
 var generation = 0;
 var pitch = width/cellsize;
 var c;///canvas drawing context
+var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 
 	             ///[born, 2neighbor, 3neighbor, drawn]
 var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"];
@@ -38,7 +39,7 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
-var mousedown=0, paused=0, stepped=0, erase=0, cursex, cursey, previouscursex, previouscursey;
+var cursex, cursey, previouscursex, previouscursey;
 var findcur = function(evt) {
 	var obj = gridcanvas;
 	var top = 0;
@@ -51,6 +52,27 @@ var findcur = function(evt) {
 	cursex = Math.floor( (evt.clientX - left + window.pageXOffset)/cellsize );
 	cursey = Math.floor( (evt.clientY - top  + window.pageYOffset)/cellsize );
 }
+function dab(x, y) {
+	cells[ x + y*pitch ] = erase ? 0 : 1;
+	if (horsym) cells[ x + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
+	if (vertsym) cells[ pitch-x-1 + y*pitch ] = erase ? 0 : 1;
+	if (horsym && vertsym) cells[ pitch-x-1 + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
+	if (paused) {
+		if (!erase){
+			c.fillStyle = colorscheme[3];
+			c.fillRect( x*cellsize, y*cellsize, cellsize, cellsize );
+			if (horsym) c.fillRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+			if (vertsym) c.fillRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
+			if (horsym && vertsym) c.fillRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+		}
+		else {
+			c.clearRect( x*cellsize, y*cellsize, cellsize, cellsize );
+			if (horsym) c.clearRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+			if (vertsym) c.clearRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
+			if (horsym && vertsym) c.clearRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+		}
+	}
+}
 stampcanvas.addEventListener("mousemove", function(evt) {
 	findcur(evt);
 	if (cursex != previouscursex  ||  cursey != previouscursey) {
@@ -58,53 +80,43 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 		c.fillStyle = curcolor;
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		if (horsym) {
+			c.fillRect( cursex*cellsize, height - cellsize - cursey*cellsize, cellsize, cellsize );
+			c.clearRect( previouscursex*cellsize, height - cellsize - previouscursey*cellsize, cellsize, cellsize );
+		}
+		if (vertsym) {
+			c.fillRect( width - cellsize - cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+			c.clearRect( width - cellsize - previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		}
+		if (horsym && vertsym) {
+			c.fillRect( width - cellsize - cursex*cellsize, height - cellsize - cursey*cellsize, cellsize, cellsize );
+			c.clearRect( width - cellsize - previouscursex*cellsize, height - cellsize - previouscursey*cellsize, cellsize, cellsize );
+		}
 		if (mousedown) {
-			cells[ cursex + cursey*pitch ] = erase ? 0 : 1;
 			c = document.getElementById('gridcanvas').getContext('2d');
-			if (paused) {
-				if (!erase){
-					c.fillStyle = colorscheme[3];
-					c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-				}
-				else c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-			}
-			else if (erase) c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+			dab(cursex, cursey);
+			
 			///flourish on drag
 			if (!erase) {
-				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
-					cells[ (cursex-i) + cursey*pitch ] = 1;
-					if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
-				}
-				for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
-					cells[ (cursex+i) + cursey*pitch ] = 1;
-					if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
-				}
-				for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
-					cells[ previouscursex + (cursey-i)*pitch ] = 1;
-					if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
-				}
-				for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
-					cells[ previouscursex + (cursey+i)*pitch ] = 1;
-					if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
-				}
+				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) dab(cursex-i, cursey);
+				for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) dab(cursex+i, cursey);
+				for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) dab(previouscursex, cursey-i);
+				for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) dab(previouscursex, cursey+i);
 			}
 		}
+		previouscursex = cursex;
+		previouscursey = cursey;
 	}
-	previouscursex = cursex;
-	previouscursey = cursey;
 }, 0);
 stampcanvas.addEventListener("mousedown", function(evt) {
 	mousedown = 1;
 	findcur(evt);
-	cells[ cursex + cursey*pitch ] = erase ? 0 : 1;
 	c = document.getElementById('gridcanvas').getContext('2d');
-	if (!erase){
-		c.fillStyle = colorscheme[3];
-		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-	}
-	else c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+	dab(cursex, cursey);
 }, 0);
-stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
+stampcanvas.addEventListener("mouseup", function(evt) {
+	mousedown = 0;
+}, 0);
 
 document.getElementById("pauseButton").onclick = function () {
 	if (paused) {
@@ -134,10 +146,28 @@ document.getElementById("clearButton").onclick = function () {
 	c.clearRect(0,0,width,height);
 }
 document.getElementById("vertsymButton").onclick = function () {
-	
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	if (!vertsym) {
+		document.getElementById("vertsymbar").style.visibility="visible";
+		vertsym = 1;
+	}
+	else {
+		document.getElementById("vertsymbar").style.visibility="hidden";
+		vertsym = 0;
+	}
 }
 document.getElementById("horsymButton").onclick = function () {
-	
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	if (!horsym) {
+		document.getElementById("horsymbar").style.visibility="visible";
+		horsym = 1;
+	}
+	else {
+		document.getElementById("horsymbar").style.visibility="hidden";
+		horsym = 0;
+	}
 }
 document.getElementById("smallerButton").onclick = function () {
 	
@@ -147,7 +177,7 @@ document.getElementById("biggerButton").onclick = function () {
 }
 document.getElementById("slowerButton").onclick = function () {
 	timeout += timeoutincrem;
-	if (timeout > maxtimeout) timeout = maxtimeout;
+	if (timeout > timeoutmax) timeout = timeoutmax;
 	document.getElementById("timeoutout").value = timeout+"ms";
 }
 document.getElementById("fasterButton").onclick = function () {
