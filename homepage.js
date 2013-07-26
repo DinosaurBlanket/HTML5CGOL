@@ -2,17 +2,13 @@
  * 
  * 
  * ::to do::
- * step
- * toggle erase
  * toggle vertically symmetrical drawing
  * toggle horizontally symmetrical drawing
  * bigger,smaller (get common divisors for width and height)
- * speed slider
- * color sliders(4*RGB)
  * 
  * ::questions::
+ * why can't I change the text on the buttons?
  * why can't i cache "document.getElementById('...').getContext('2d')"
- * why dosn't "<input type="range"/>" work in firefox?
  * how can i get rid of the text cursor when dragging in chrome?
  */
 
@@ -30,9 +26,8 @@ var generation = 0;
 var pitch = width/cellsize;
 var c;///canvas drawing context
 
-var backcolor = "#EEE", trim = "#AAA";
-	              //[born, 2neighbor, 3neighbor, drawn]
-var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"]/*["#A3A", "#3AA", "#AA3"]["#F8B", "#B8F", "#88F"]*/;
+	             ///[born, 2neighbor, 3neighbor, drawn]
+var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"];
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
 
@@ -64,32 +59,32 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
 		if (mousedown) {
-			cells[ cursex + cursey*pitch ] = erase ? 0 : 1;//curcoords.push( [cursex,cursey] );
+			cells[ cursex + cursey*pitch ] = erase ? 0 : 1;
 			c = document.getElementById('gridcanvas').getContext('2d');
 			if (paused) {
-				c.fillStyle = erase ? backcolor : colorscheme[3];
-				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+				if (!erase){
+					c.fillStyle = colorscheme[3];
+					c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+				}
+				else c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 			}
-			else if (erase) {
-				c.fillStyle = backcolor;
-				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-			}
+			else if (erase) c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 			///flourish on drag
 			if (!erase) {
 				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
-					cells[ (cursex-i) + cursey*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [cursex-i, cursey] );
+					cells[ (cursex-i) + cursey*pitch ] = 1;
 					if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
 				}
 				for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
-					cells[ (cursex+i) + cursey*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [cursex+i, cursey] );
+					cells[ (cursex+i) + cursey*pitch ] = 1;
 					if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
 				}
 				for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
-					cells[ previouscursex + (cursey-i)*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [previouscursex, cursey - i] );
+					cells[ previouscursex + (cursey-i)*pitch ] = 1;
 					if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
 				}
 				for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
-					cells[ previouscursex + (cursey+i)*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [previouscursex, cursey + i] );
+					cells[ previouscursex + (cursey+i)*pitch ] = 1;
 					if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
 				}
 			}
@@ -101,12 +96,13 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 stampcanvas.addEventListener("mousedown", function(evt) {
 	mousedown = 1;
 	findcur(evt);
-	cells[ cursex + cursey*pitch ] = erase ? 0 : 1;//curcoords.push( [ cursex, cursey ] );
-	//if (paused) {
-		c = document.getElementById('gridcanvas').getContext('2d');
-		c.fillStyle = erase ? backcolor : colorscheme[3];
+	cells[ cursex + cursey*pitch ] = erase ? 0 : 1;
+	c = document.getElementById('gridcanvas').getContext('2d');
+	if (!erase){
+		c.fillStyle = colorscheme[3];
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-	//}
+	}
+	else c.clearRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 }, 0);
 stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
 
@@ -135,8 +131,7 @@ document.getElementById("clearButton").onclick = function () {
 		//neighborcounts[i] = 0;
 	}
 	c = document.getElementById('gridcanvas').getContext('2d');
-	c.fillStyle = backcolor;
-	c.fillRect(0,0,width,height);
+	c.clearRect(0,0,width,height);
 }
 document.getElementById("vertsymButton").onclick = function () {
 	
@@ -171,21 +166,6 @@ function loop() {
 	if (!paused) {
 		//console.log("generation : " + generation);
 		c = document.getElementById('gridcanvas').getContext('2d');
-		/*
-		while (curcoords.length) {
-			var cc = curcoords.pop();
-			var ccc = cc[0] + cc[1]*pitch;
-			if (cells[ccc]) {
-				cells[ccc] = 0;
-				c.fillStyle = backcolor;
-				fillcell(ccc);
-			}
-			else {
-				cells[ccc] = 1;
-				c.fillStyle = colorscheme[0];
-				fillcell(ccc);
-			}
-		}*/
 		///tick
 		for (var i=0; i<arraylength; i++) {
 			if (cells[i]) {
@@ -204,8 +184,7 @@ function loop() {
 			if (cells[i]){
 				if (neighborcounts[i]<2 || neighborcounts[i]>3) {
 					cells[i] = 0;
-					c.fillStyle = backcolor;
-					fillcell(i);
+					c.clearRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 					//console.log(i + " died");
 				}
 				else {
@@ -234,11 +213,6 @@ function loop() {
 	}
 }
 
-
-c = document.getElementById('gridcanvas').getContext('2d');
-c.fillStyle = backcolor;
-c.fillRect(0, 0, width, height);
 loop();
-
 
 }//init

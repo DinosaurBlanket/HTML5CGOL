@@ -4,21 +4,28 @@ body {
 	color: #EEE;
 }
 #cancan {
+	background-color: #EEE;
 	height: 600px;
 	margin-top: 40px;
+}
+#backcanvas {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 0;
 }
 #gridcanvas {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	z-index: 0;
+	z-index: 1;
 }
 #stampcanvas {
 	cursor: none;
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	z-index: 1;
+	z-index: 2;
 }
 #controls {
 	margin-top: 10px;
