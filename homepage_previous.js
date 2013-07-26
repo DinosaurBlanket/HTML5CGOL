@@ -2,14 +2,18 @@
  * 
  * 
  * ::to do::
- * toggle play/pause
- * toggle draw/erase
+ * toggle erase
  * toggle vertically symmetrical drawing
  * toggle horizontally symmetrical drawing
  * clear
  * bigger,smaller (get common divisors for width and height)
  * speed slider
  * color sliders(4*RGB)
+ * 
+ * ::questions::
+ * why can't i cache "document.getElementById('...').getContext('2d')"
+ * why dosn't "<input type="range"/>" work in firefox?
+ * how can i get rid of the text cursor when dragging in chrome?
  */
 
 function init() {
@@ -19,9 +23,10 @@ var width = 800;
 var height = 600;
 var cellsize = 5;
 var timeout = 100;
-flourishlimit = 16;
+var flourishlimit = 16;
 var generation = 0;
 var pitch = width/cellsize;
+var c;///canvas drawing context
 
 var backcolor = "#EEE", trim = "#AAA";
 	              //[born, 2neighbor, 3neighbor, drawn]
@@ -52,14 +57,14 @@ var findcur = function(evt) {
 stampcanvas.addEventListener("mousemove", function(evt) {
 	findcur(evt);
 	if (cursex != previouscursex  ||  cursey != previouscursey) {
-		var c = document.getElementById('stampcanvas').getContext('2d');
+		c = document.getElementById('stampcanvas').getContext('2d');
 		c.fillStyle = curcolor;
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
 		if (mousedown) {
 			curcoords.push( [cursex,cursey] );
 			if (paused) {
-				var c = document.getElementById('gridcanvas').getContext('2d');
+				c = document.getElementById('gridcanvas').getContext('2d');
 				c.fillStyle = colorscheme[3];
 				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 			}
@@ -90,31 +95,59 @@ stampcanvas.addEventListener("mousedown", function(evt) {
 	findcur(evt);
 	curcoords.push( [ cursex, cursey ] );
 	if (paused) {
-		var c = document.getElementById('gridcanvas').getContext('2d');
+		c = document.getElementById('gridcanvas').getContext('2d');
 		c.fillStyle = colorscheme[3];
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 	}
 }, 0);
 stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
-controlcanvas.addEventListener("mousedown", function(evt) {
+
+document.getElementById("pauseButton").onclick = function () {
 	if (paused) {
 		paused = 0;
-		var c = document.getElementById('stampcanvas').getContext('2d');
+		c = document.getElementById('stampcanvas').getContext('2d');
 		c.clearRect(0, 0, width, height);
 		loop();
 	}
 	else paused = 1;
-}, 0);
+}
+
+document.getElementById("eraseButton").onclick = function () {
+	
+}
+document.getElementById("clearButton").onclick = function () {
+	for (var i=0; i<arraylength; i++) {
+		cells[i] = 0;
+		curcoords = [];
+		//neighborcounts[i] = 0;
+	}
+	c = document.getElementById('gridcanvas').getContext('2d');
+	c.fillStyle = backcolor;
+	c.fillRect(0,0,width,height);
+}
+document.getElementById("vertsymButton").onclick = function () {
+	
+}
+document.getElementById("horsymButton").onclick = function () {
+	
+}
+document.getElementById("smallerButton").onclick = function () {
+	
+}
+document.getElementById("biggerButton").onclick = function () {
+	
+}
+
 
 function fillcell(i) { 
-	var c = document.getElementById('gridcanvas').getContext('2d');
+	c = document.getElementById('gridcanvas').getContext('2d');
 	c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 }
 
 function loop() {
 	if (!paused) {
 		//console.log("generation : " + generation);
-		var c = document.getElementById('gridcanvas').getContext('2d');
+		c = document.getElementById('gridcanvas').getContext('2d');
 		
 		while (curcoords.length) {
 			var cc = curcoords.pop();
@@ -174,7 +207,7 @@ function loop() {
 }
 
 
-var c = document.getElementById('gridcanvas').getContext('2d');
+c = document.getElementById('gridcanvas').getContext('2d');
 c.fillStyle = backcolor;
 c.fillRect(0, 0, width, height);
 loop();

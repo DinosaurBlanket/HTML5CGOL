@@ -2,13 +2,18 @@
  * 
  * 
  * ::to do::
+ * step
  * toggle erase
  * toggle vertically symmetrical drawing
  * toggle horizontally symmetrical drawing
- * clear
  * bigger,smaller (get common divisors for width and height)
  * speed slider
  * color sliders(4*RGB)
+ * 
+ * ::questions::
+ * why can't i cache "document.getElementById('...').getContext('2d')"
+ * why dosn't "<input type="range"/>" work in firefox?
+ * how can i get rid of the text cursor when dragging in chrome?
  */
 
 function init() {
@@ -18,9 +23,12 @@ var width = 800;
 var height = 600;
 var cellsize = 5;
 var timeout = 100;
-flourishlimit = 16;
+var flourishlimit = 16;
+var timeoutincrem = 20;
+var maxtimeout = 500;
 var generation = 0;
 var pitch = width/cellsize;
+var c;///canvas drawing context
 
 var backcolor = "#EEE", trim = "#AAA";
 	              //[born, 2neighbor, 3neighbor, drawn]
@@ -35,7 +43,7 @@ for (var i=0; i<arraylength; i++) {
 	neighborcounts[i] = 0;
 }
 
-var curcoords = [[]], mousedown = 0, cursex, cursey, previouscursex, previouscursey, paused;
+var mousedown=0, paused=0, stepped=0, erase=0, cursex, cursey, previouscursex, previouscursey;
 var findcur = function(evt) {
 	var obj = gridcanvas;
 	var top = 0;
@@ -51,33 +59,39 @@ var findcur = function(evt) {
 stampcanvas.addEventListener("mousemove", function(evt) {
 	findcur(evt);
 	if (cursex != previouscursex  ||  cursey != previouscursey) {
-		var c = document.getElementById('stampcanvas').getContext('2d');
+		c = document.getElementById('stampcanvas').getContext('2d');
 		c.fillStyle = curcolor;
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
 		if (mousedown) {
-			curcoords.push( [cursex,cursey] );
+			cells[ cursex + cursey*pitch ] = erase ? 0 : 1;//curcoords.push( [cursex,cursey] );
+			c = document.getElementById('gridcanvas').getContext('2d');
 			if (paused) {
-				var c = document.getElementById('gridcanvas').getContext('2d');
-				c.fillStyle = colorscheme[3];
+				c.fillStyle = erase ? backcolor : colorscheme[3];
+				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
+			}
+			else if (erase) {
+				c.fillStyle = backcolor;
 				c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 			}
 			///flourish on drag
-			for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
-				curcoords.push( [cursex-i, cursey] );
-				if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
-			}
-			for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
-				curcoords.push( [cursex+i, cursey] );
-				if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
-			}
-			for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
-				curcoords.push( [previouscursex, cursey - i] );
-				if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
-			}
-			for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
-				curcoords.push( [previouscursex, cursey + i] );
-				if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
+			if (!erase) {
+				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) {
+					cells[ (cursex-i) + cursey*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [cursex-i, cursey] );
+					if (paused) c.fillRect( (cursex-i)*cellsize, cursey*cellsize, cellsize, cellsize );
+				}
+				for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) {
+					cells[ (cursex+i) + cursey*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [cursex+i, cursey] );
+					if (paused) c.fillRect( (cursex+i)*cellsize, cursey*cellsize, cellsize, cellsize );
+				}
+				for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) {
+					cells[ previouscursex + (cursey-i)*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [previouscursex, cursey - i] );
+					if (paused) c.fillRect( previouscursex*cellsize, (cursey - i)*cellsize, cellsize, cellsize );
+				}
+				for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) {
+					cells[ previouscursex + (cursey+i)*pitch ] = /*erase ? 0 :*/ 1;//curcoords.push( [previouscursex, cursey + i] );
+					if (paused) c.fillRect( previouscursex*cellsize, (cursey + i)*cellsize, cellsize, cellsize );
+				}
 			}
 		}
 	}
@@ -87,35 +101,77 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 stampcanvas.addEventListener("mousedown", function(evt) {
 	mousedown = 1;
 	findcur(evt);
-	curcoords.push( [ cursex, cursey ] );
-	if (paused) {
-		var c = document.getElementById('gridcanvas').getContext('2d');
-		c.fillStyle = colorscheme[3];
+	cells[ cursex + cursey*pitch ] = erase ? 0 : 1;//curcoords.push( [ cursex, cursey ] );
+	//if (paused) {
+		c = document.getElementById('gridcanvas').getContext('2d');
+		c.fillStyle = erase ? backcolor : colorscheme[3];
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
-	}
+	//}
 }, 0);
 stampcanvas.addEventListener("mouseup", function(evt) {mousedown = 0}, 0);
 
 document.getElementById("pauseButton").onclick = function () {
 	if (paused) {
 		paused = 0;
-		var c = document.getElementById('stampcanvas').getContext('2d');
+		c = document.getElementById('stampcanvas').getContext('2d');
 		c.clearRect(0, 0, width, height);
 		loop();
 	}
 	else paused = 1;
 }
+document.getElementById("stepButton").onclick = function () {
+	if (paused) {
+		stepped = 1;
+		paused = 0;
+		loop();
+	}
+}
+document.getElementById("eraseButton").onclick = function () {
+	erase = erase ? 0 : 1;
+}
+document.getElementById("clearButton").onclick = function () {
+	for (var i=0; i<arraylength; i++) {
+		cells[i] = 0;
+		//neighborcounts[i] = 0;
+	}
+	c = document.getElementById('gridcanvas').getContext('2d');
+	c.fillStyle = backcolor;
+	c.fillRect(0,0,width,height);
+}
+document.getElementById("vertsymButton").onclick = function () {
+	
+}
+document.getElementById("horsymButton").onclick = function () {
+	
+}
+document.getElementById("smallerButton").onclick = function () {
+	
+}
+document.getElementById("biggerButton").onclick = function () {
+	
+}
+document.getElementById("slowerButton").onclick = function () {
+	timeout += timeoutincrem;
+	if (timeout > maxtimeout) timeout = maxtimeout;
+	document.getElementById("timeoutout").value = timeout+"ms";
+}
+document.getElementById("fasterButton").onclick = function () {
+	timeout -= timeoutincrem;
+	if (timeout < 0) timeout = 0;
+	document.getElementById("timeoutout").value = timeout+"ms";
+}
+
 
 function fillcell(i) { 
-	var c = document.getElementById('gridcanvas').getContext('2d');
+	c = document.getElementById('gridcanvas').getContext('2d');
 	c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 }
 
 function loop() {
 	if (!paused) {
 		//console.log("generation : " + generation);
-		var c = document.getElementById('gridcanvas').getContext('2d');
-		
+		c = document.getElementById('gridcanvas').getContext('2d');
+		/*
 		while (curcoords.length) {
 			var cc = curcoords.pop();
 			var ccc = cc[0] + cc[1]*pitch;
@@ -129,7 +185,7 @@ function loop() {
 				c.fillStyle = colorscheme[0];
 				fillcell(ccc);
 			}
-		}
+		}*/
 		///tick
 		for (var i=0; i<arraylength; i++) {
 			if (cells[i]) {
@@ -169,12 +225,17 @@ function loop() {
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
 		
+		if (stepped) {
+			stepped = 0;
+			paused = 1;
+		}
+		
 		window.setTimeout(loop, timeout);
 	}
 }
 
 
-var c = document.getElementById('gridcanvas').getContext('2d');
+c = document.getElementById('gridcanvas').getContext('2d');
 c.fillStyle = backcolor;
 c.fillRect(0, 0, width, height);
 loop();
