@@ -2,8 +2,6 @@
  * 
  * 
  * ::to do::
- * toggle vertically symmetrical drawing
- * toggle horizontally symmetrical drawing
  * bigger,smaller (get common divisors for width and height)
  * 
  * ::questions::
@@ -17,7 +15,9 @@ function init() {
 
 var width = 800;
 var height = 600;
-var cellsize = 5;
+var cellsizes = [1,2,4,5,8,10,20,25,40,50,100];
+             /// 0,1,2,3,4,5, 6, 7, 8, 9, 10
+var cellsize = cellsizes[5];
 var flourishlimit = 16;
 var timeout = 100;
 var timeoutincrem = 20;
@@ -27,8 +27,8 @@ var pitch = width/cellsize;
 var c;///canvas drawing context
 var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 
-	             ///[born, 2neighbor, 3neighbor, drawn]
 var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"];
+	             /// born, 2neighbor, 3neighbor, drawn
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
 

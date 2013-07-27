@@ -7,50 +7,51 @@
 	<title>
 		homepage
 	</title>
-	<script src='homepage.js'></script>
-	<link rel='stylesheet' type='text/css' href='homepage.css'/>
+	<script src="homepage.js"></script>
+	<link rel="stylesheet" type="text/css" href="homepage.css"/>
 </head>
 
-<body onload='init();'>
+<body onload="init();">
 	
-	<div id='cancan' class='center'>
+	<div id="cancan" class="center">
 		<div id="horsymbar"></div>
 		<div id="vertsymbar"></div>
-		<canvas id='gridcanvas'  width='800' height='600'>gridcanvas  element failed to display</canvas>
-		<canvas id='stampcanvas' width='800' height='600'>stampcanvas element failed to display</canvas>
+		<canvas id="gridcanvas"  width="800" height="600">gridcanvas  element failed to display</canvas>
+		<canvas id="stampcanvas" width="800" height="600">stampcanvas element failed to display</canvas>
 	</div>
 	
-	<div id='controls' class='center'>
-		<input type="button" class='button' id="pauseButton"   value="play/pause"/>
-		<input type="button" class='button' id="stepButton"    value="step"/>
-		<input type="button" class='button' id="eraseButton"   value="draw/erase"/>
-		<input type="button" class='button' id="clearButton"   value="clear"/>
-		<input type="button" class='button' id="vertsymButton" value="vert.sym."/>
-		<input type="button" class='button' id="horsymButton"  value="hor.sym."/>
-		<input type="button" class='button' id="smallerButton" value="smaller"/>
-		<input type="button" class='button' id="biggerButton"  value="bigger"/>
-		<input type="button" class='button' id="slowerButton"  value="slower"/>
-		<input type="button" class='button' id="fasterButton"  value="faster"/>
-		<input type="text"   class='button' id="timeoutout"    value="100ms" style="width:60px;" disabled="disabled"/>
+	<div id="controls" class="center">
+		<input type="button" class="button"  id="pauseButton"   value="play/pause"/>
+		<input type="button" class="button"  id="stepButton"    value="step"/>
+		<input type="button" class="button"  id="eraseButton"   value="draw/erase"/>
+		<input type="button" class="button"  id="clearButton"   value="clear"/>
+		<input type="button" class="button"  id="vertsymButton" value="vert.sym."/>
+		<input type="button" class="button"  id="horsymButton"  value="hor.sym."/>
+		<input type="button" class="button"  id="smallerButton" value="smaller"/>
+		<input type="button" class="button"  id="biggerButton"  value="bigger"/>
+		<input type="text"   class="textout" id="cellsizeout"   value="10px" disabled="disabled"/>
+		<input type="button" class="button"  id="slowerButton"  value="slower"/>
+		<input type="button" class="button"  id="fasterButton"  value="faster"/>
+		<input type="text"   class="textout" id="timeoutout"    value="100ms" disabled="disabled"/>
 	</div>
 
-	<div class='frontlink'>
+	<div class="frontlink">
 		<h4 style="text-align: right;">
-			<a href='mailto:JonArintok@Gmail.com'/>
+			<a href="mailto:JonArintok@Gmail.com"/>
 				JonArintok@Gmail.com
 			</a>
 		</h>
 	</div>
 	
-	<div class='frontlink'>
+	<div class="frontlink">
 		<h4 style="text-align: right;">
-			<a href='https://github.com/DinosaurBlanket'/>
+			<a href="https://github.com/DinosaurBlanket"/>
 				github.com/DinosaurBlanket
 			</a>
 		</h>
 	</div>
 	
-	<div class='center' id='foot'>
+	<div class="center" id="foot">
 	</div>
 	
 </body>

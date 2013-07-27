@@ -1,28 +1,60 @@
+/* 
+ * colors:
+ * #67D
+ * #99C
+ * #BBB
+ * #FFF
+ */
+
 body {
-	background: #AAA;
+	background: #BBB;
 	font-family: Verdana;
-	color: #EEE;
+	color: #FFF;
+}
+.center {
+	position: relative;
+	width: 800px;
+	left: 50%;
+	margin-left: -400px;
+}
+.frontlink {
+	position: relative;
+	width: 500px;
+	left: 50%;
+	margin-left: -100px;
+	margin-top: 20px;
+}
+.button {
+	background: #FFF;
+	color: #67D;
+	border-style:none;
+}
+.textout {
+	background: #FFF;
+	color: #89C;
+	border-style: none;
+	width: 50px;
 }
 #cancan {
-	background-color: #BBB;
+	background: #FFF;
 	height: 600px;
 	margin-top: 40px;
 }
 #horsymbar {
-	background-color: #888;
+	background: #BBB;
 	position: absolute;
-	top: 298px;
+	top: 299px;
 	left: 0px;
 	width: 800px;
-	height: 4px;
+	height: 2px;
 	visibility: hidden;
 }
 #vertsymbar {
-	background-color: #888;
+	background: #BBB;
 	position: absolute;
 	top: 0px;
-	left: 398px;
-	width: 4px;
+	left: 399px;
+	width: 2px;
 	height: 600px;
 	visibility: hidden;
 }
@@ -47,37 +79,21 @@ body {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
-.center {
-	position: relative;
-	width: 800px;
-	left: 50%;
-	margin-left: -400px;
-}
-.frontlink {
-	position: relative;
-	width: 500px;
-	left: 50%;
-	margin-left: -100px;
-	margin-top: 20px;
-}
-.button {
-	border-style:none;
-}
 
 a:link    {
-	color: #EEE;
-	text-decoration:none;
+	color: #FFF;
+	text-decoration: none;
 }
 a:visited {
-	color: #EEE;
-	text-decoration:none;
+	color: #FFF;
+	text-decoration: none;
 }
 a:hover   {
-	color: #FFF;
-	text-decoration:none;
+	color: #67D;
+	text-decoration: none;
 }
 a:active  {
-	color: #FFF;
-	text-decoration:none;
+	color: #67D;
+	text-decoration: none;
 }
 
