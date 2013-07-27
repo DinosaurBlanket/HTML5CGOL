@@ -17,7 +17,8 @@ var width = 800;
 var height = 600;
 var cellsizes = [1,2,4,5,8,10,20,25,40,50,100];
              /// 0,1,2,3,4,5, 6, 7, 8, 9, 10
-var cellsize = cellsizes[5];
+var cellsizei = 5;
+var cellsize = cellsizes[cellsizei];
 var flourishlimit = 16;///feel free to change this
 var timeout = 100;
 var timeoutincrem = 20;///feel free to change this
@@ -31,7 +32,6 @@ var twoneighcolor    = "#6AE";
 var threeneightcolor = "#6DB";
 var drawncolor       = "#66E";
 var curcolor = "rgba(40, 40, 40, 0.4)";
-
 
 var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
@@ -95,7 +95,6 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 		if (mousedown) {
 			c = document.getElementById('gridcanvas').getContext('2d');
 			dab(cursex, cursey);
-			
 			///flourish on drag
 			if (!erase) {
 				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) dab(cursex-i, cursey);
@@ -169,11 +168,41 @@ document.getElementById("horsymButton").onclick = function () {
 		horsym = 0;
 	}
 }
+function resetcellsize() {
+	var newcellsize = cellsizes[cellsizei];
+	var newpitch = width/newcellsize;
+	var newarraylength = newpitch*(height/newcellsize);
+	var newcells = [];
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	c = document.getElementById('gridcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	c.fillStyle = drawncolor;
+	for (var i=0; i<pitch; i++) {
+		for (var j=0; j<height/cellsize; j++) {
+			newcells[ i + (newpitch-pitch)/2 + j*newpitch] = cells[ i + j*pitch];/* + ((height/newcellsize - height/cellsize)/2)*newpitch /**/
+			if (cells[ i + j*pitch]) {
+				c.fillRect( ( i + (newpitch-pitch)/2 )*newcellsize, j*newcellsize, newcellsize,newcellsize );
+			}
+		}
+	}
+	cellsize = newcellsize;
+	pitch = newpitch;
+	arraylength = newarraylength;
+	cells = newcells;
+	document.getElementById("cellsizeout").value = cellsize+"px";
+}
 document.getElementById("smallerButton").onclick = function () {
-	
+	if (cellsizei != 0) {
+		cellsizei--;
+		resetcellsize();
+	}
 }
 document.getElementById("biggerButton").onclick = function () {
-	
+	if (cellsizei < cellsizes.length) {
+		cellsizei++;
+		resetcellsize();
+	}
 }
 document.getElementById("slowerButton").onclick = function () {
 	timeout += timeoutincrem;
@@ -186,11 +215,6 @@ document.getElementById("fasterButton").onclick = function () {
 	document.getElementById("timeoutout").value = timeout+"ms";
 }
 
-
-function fillcell(i) { 
-	c = document.getElementById('gridcanvas').getContext('2d');
-	c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
-}
 
 function loop() {
 	if (!paused) {
@@ -219,20 +243,22 @@ function loop() {
 				}
 				else {
 					c.fillStyle = neighborcounts[i]==2 ? twoneighcolor : threeneightcolor;
-					fillcell(i);
+					c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 					//console.log(i + " lived");
 				}
 			}
 			else if (neighborcounts[i]==3) {
 				cells[i] = 1;
 				c.fillStyle = borncolor;
-				fillcell(i);
+				c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 				//console.log(i + " born");
 			}
 		}
 		//reset
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
+		
+		//if (cellsize != cellsizes[cellsizei]) resetcellsize();
 		
 		if (stepped) {
 			stepped = 0;

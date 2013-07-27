@@ -1,6 +1,7 @@
 /* 
  * colors:
  * #67D
+ * #678
  * #99C
  * #BBB
  * #FFF
@@ -27,11 +28,12 @@ body {
 .button {
 	background: #FFF;
 	color: #67D;
-	border-style:none;
+	border-style: none;
+	font-weight: bold;
 }
 .textout {
 	background: #FFF;
-	color: #89C;
+	color: #678;
 	border-style: none;
 	width: 50px;
 }
