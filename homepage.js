@@ -18,20 +18,22 @@ var height = 600;
 var cellsizes = [1,2,4,5,8,10,20,25,40,50,100];
              /// 0,1,2,3,4,5, 6, 7, 8, 9, 10
 var cellsize = cellsizes[5];
-var flourishlimit = 16;
+var flourishlimit = 16;///feel free to change this
 var timeout = 100;
-var timeoutincrem = 20;
-var timeoutmax = 500;
+var timeoutincrem = 20;///feel free to change this
+var timeoutmax = 500;  ///feel free to change this
 var generation = 0;
 var pitch = width/cellsize;
 var c;///canvas drawing context
-var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 
-var colorscheme = ["#A6D", "#6AD", "#6DA", "#66D"];
-	             /// born, 2neighbor, 3neighbor, drawn
+var borncolor        = "#A6E";
+var twoneighcolor    = "#6AE";
+var threeneightcolor = "#6DB";
+var drawncolor       = "#66E";
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
 
+var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
@@ -57,20 +59,18 @@ function dab(x, y) {
 	if (horsym) cells[ x + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
 	if (vertsym) cells[ pitch-x-1 + y*pitch ] = erase ? 0 : 1;
 	if (horsym && vertsym) cells[ pitch-x-1 + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
-	if (paused) {
-		if (!erase){
-			c.fillStyle = colorscheme[3];
-			c.fillRect( x*cellsize, y*cellsize, cellsize, cellsize );
-			if (horsym) c.fillRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
-			if (vertsym) c.fillRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
-			if (horsym && vertsym) c.fillRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
-		}
-		else {
-			c.clearRect( x*cellsize, y*cellsize, cellsize, cellsize );
-			if (horsym) c.clearRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
-			if (vertsym) c.clearRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
-			if (horsym && vertsym) c.clearRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
-		}
+	if (!erase){
+		c.fillStyle = drawncolor;
+		c.fillRect( x*cellsize, y*cellsize, cellsize, cellsize );
+		if (horsym) c.fillRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+		if (vertsym) c.fillRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
+		if (horsym && vertsym) c.fillRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+	}
+	else {
+		c.clearRect( x*cellsize, y*cellsize, cellsize, cellsize );
+		if (horsym) c.clearRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
+		if (vertsym) c.clearRect( width - cellsize - x*cellsize, y*cellsize, cellsize, cellsize );
+		if (horsym && vertsym) c.clearRect( width - cellsize - x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
 	}
 }
 stampcanvas.addEventListener("mousemove", function(evt) {
@@ -218,14 +218,14 @@ function loop() {
 					//console.log(i + " died");
 				}
 				else {
-					c.fillStyle = neighborcounts[i]==2 ? colorscheme[1] : colorscheme[2];
+					c.fillStyle = neighborcounts[i]==2 ? twoneighcolor : threeneightcolor;
 					fillcell(i);
 					//console.log(i + " lived");
 				}
 			}
 			else if (neighborcounts[i]==3) {
 				cells[i] = 1;
-				c.fillStyle = colorscheme[0];
+				c.fillStyle = borncolor;
 				fillcell(i);
 				//console.log(i + " born");
 			}
