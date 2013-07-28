@@ -171,25 +171,32 @@ document.getElementById("horsymButton").onclick = function () {
 	}
 }
 function resetcellsize() {
-	///bug: when cellsize doubles, the left half of the grid is wiped(yet still drawn)
-	///     this does not happen with other intervals such as from 4 to 5, nor does it happen when cellsize is halved
 	var newcellsize = cellsizes[cellsizei];
 	var newpitch = width/newcellsize;
 	var newarraylength = newpitch*(height/newcellsize);
 	var newcells = [];
-	if (newarraylength>arraylength) {
-		for (var i=0; i<newarraylength; i++) newcells[i]=0;
-	}
 	c = document.getElementById('stampcanvas').getContext('2d');
 	c.clearRect(0,0, width,height);
 	c = document.getElementById('gridcanvas').getContext('2d');
 	c.clearRect(0,0, width,height);
 	c.fillStyle = drawncolor;
-	for (var i=0; i<pitch; i++) {
-		for (var j=0; j<height/cellsize; j++) {
-			newcells[ i + (newpitch-pitch)/2 + j*newpitch + ((height/newcellsize - height/cellsize)/2)*newpitch ] = cells[ i + j*pitch];/* + ((height/newcellsize - height/cellsize)/2)*newpitch /**/
-			if ( cells[ i + j*pitch] ) {
-				c.fillRect( ( i + (newpitch-pitch)/2 )*newcellsize, ( j + (height/newcellsize - height/cellsize)/2 )*newcellsize, newcellsize,newcellsize );
+	if (newarraylength>arraylength) {///smaller
+		for (var i=0; i<height/cellsize; i++) {
+			for (var j=0; j<pitch; j++) {
+				newcells[ j + (newpitch-pitch)/2 + ( i + (height/newcellsize - height/cellsize)/2 )*newpitch ] = cells[ j + i*pitch ];
+				if ( cells[ j + i*pitch ] ) {
+					c.fillRect( ( j + (newpitch-pitch)/2 )*newcellsize, ( i + (height/newcellsize - height/cellsize)/2 )*newcellsize, newcellsize,newcellsize );
+				}
+			}
+		}
+	}
+	else {///bigger
+		for (var i=0; i<height/newcellsize; i++) {
+			for (var j=0; j<newpitch; j++) {
+				newcells[ j + i*newpitch ] = cells[ j + (pitch-newpitch)/2 + ( i + (height/cellsize - height/newcellsize)/2 )*pitch ];
+				if ( newcells[ j + i*newpitch ] ) {
+					c.fillRect( j*newcellsize, i*newcellsize, newcellsize,newcellsize );
+				}
 			}
 		}
 	}
@@ -202,13 +209,13 @@ function resetcellsize() {
 document.getElementById("smallerButton").onclick = function () {
 	if (cellsizei != 0) {
 		cellsizei--;
-		//resetcellsize();
+		resetcellsize();
 	}
 }
 document.getElementById("biggerButton").onclick = function () {
-	if (cellsizei < cellsizes.length) {
+	if (cellsizei < cellsizes.length-1) {
 		cellsizei++;
-		//resetcellsize();
+		resetcellsize();
 	}
 }
 document.getElementById("slowerButton").onclick = function () {
@@ -265,7 +272,7 @@ function loop() {
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
 		
-		if (cellsize != cellsizes[cellsizei]) resetcellsize();
+		//if (cellsize != cellsizes[cellsizei]) resetcellsize();
 		
 		if (stepped) {
 			stepped = 0;
