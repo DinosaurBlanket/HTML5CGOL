@@ -13,27 +13,29 @@
 function init() {
 
 
-var width = 800;
-var height = 600;
-var cellsizes = [1,2,4,5,8,10,20,25,40,50,100];
-             /// 0,1,2,3,4,5, 6, 7, 8, 9, 10
-var cellsizei = 5;
-var cellsize = cellsizes[cellsizei];
+var width = 800;   ///if you change this, change cellsizes and relevant css values accordingly
+var height = 600;  ///if you change this, change cellsizes and relevant css values accordingly
+var cellsizes = [1,2,4,5,10,20,25,50,100]; ///some common divisors of width and height, the remainders of which are even
+             /// 0,1,2,3,4, 5, 6, 7, 8
+var cellsizei = 4;     ///feel free to change this
 var flourishlimit = 16;///feel free to change this
-var timeout = 100;
+var timeout = 100;     ///feel free to change this
 var timeoutincrem = 20;///feel free to change this
 var timeoutmax = 500;  ///feel free to change this
-var generation = 0;
+var cellsize = cellsizes[cellsizei];
 var pitch = width/cellsize;
 var c;///canvas drawing context
+document.getElementById("cellsizeout").value = cellsize+"px";
+document.getElementById("timeoutout").value = timeout+"ms";
 
+///feel free to change these
 var borncolor        = "#A6E";
 var twoneighcolor    = "#6AE";
 var threeneightcolor = "#6DB";
 var drawncolor       = "#66E";
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
-var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
+var generation=0, mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
@@ -169,10 +171,15 @@ document.getElementById("horsymButton").onclick = function () {
 	}
 }
 function resetcellsize() {
+	///bug: when cellsize doubles, the left half of the grid is wiped(yet still drawn)
+	///     this does not happen with other intervals such as from 4 to 5, nor does it happen when cellsize is halved
 	var newcellsize = cellsizes[cellsizei];
 	var newpitch = width/newcellsize;
 	var newarraylength = newpitch*(height/newcellsize);
 	var newcells = [];
+	if (newarraylength>arraylength) {
+		for (var i=0; i<newarraylength; i++) newcells[i]=0;
+	}
 	c = document.getElementById('stampcanvas').getContext('2d');
 	c.clearRect(0,0, width,height);
 	c = document.getElementById('gridcanvas').getContext('2d');
@@ -180,9 +187,9 @@ function resetcellsize() {
 	c.fillStyle = drawncolor;
 	for (var i=0; i<pitch; i++) {
 		for (var j=0; j<height/cellsize; j++) {
-			newcells[ i + (newpitch-pitch)/2 + j*newpitch] = cells[ i + j*pitch];/* + ((height/newcellsize - height/cellsize)/2)*newpitch /**/
-			if (cells[ i + j*pitch]) {
-				c.fillRect( ( i + (newpitch-pitch)/2 )*newcellsize, j*newcellsize, newcellsize,newcellsize );
+			newcells[ i + (newpitch-pitch)/2 + j*newpitch + ((height/newcellsize - height/cellsize)/2)*newpitch ] = cells[ i + j*pitch];/* + ((height/newcellsize - height/cellsize)/2)*newpitch /**/
+			if ( cells[ i + j*pitch] ) {
+				c.fillRect( ( i + (newpitch-pitch)/2 )*newcellsize, ( j + (height/newcellsize - height/cellsize)/2 )*newcellsize, newcellsize,newcellsize );
 			}
 		}
 	}
@@ -195,13 +202,13 @@ function resetcellsize() {
 document.getElementById("smallerButton").onclick = function () {
 	if (cellsizei != 0) {
 		cellsizei--;
-		resetcellsize();
+		//resetcellsize();
 	}
 }
 document.getElementById("biggerButton").onclick = function () {
 	if (cellsizei < cellsizes.length) {
 		cellsizei++;
-		resetcellsize();
+		//resetcellsize();
 	}
 }
 document.getElementById("slowerButton").onclick = function () {
@@ -254,18 +261,17 @@ function loop() {
 				//console.log(i + " born");
 			}
 		}
-		//reset
+		///reset
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
 		
-		//if (cellsize != cellsizes[cellsizei]) resetcellsize();
+		if (cellsize != cellsizes[cellsizei]) resetcellsize();
 		
 		if (stepped) {
 			stepped = 0;
 			paused = 1;
 		}
-		
-		window.setTimeout(loop, timeout);
+		else window.setTimeout(loop, timeout);
 	}
 }
 
