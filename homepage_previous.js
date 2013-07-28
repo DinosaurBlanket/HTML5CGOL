@@ -2,7 +2,6 @@
  * 
  * 
  * ::to do::
- * bigger,smaller (get common divisors for width and height)
  * 
  * ::questions::
  * why can't I change the text on the buttons?
@@ -13,27 +12,29 @@
 function init() {
 
 
-var width = 800;
-var height = 600;
-var cellsizes = [1,2,4,5,8,10,20,25,40,50,100];
-             /// 0,1,2,3,4,5, 6, 7, 8, 9, 10
-var cellsize = cellsizes[5];
+var width = 800;   ///if you change this, change cellsizes and relevant css values accordingly
+var height = 600;  ///if you change this, change cellsizes and relevant css values accordingly
+var cellsizes = [2,4,5,10,20,25,50,100]; ///some common divisors of width and height, the remainders of which are even
+             /// 0,1,2,3, 4, 5, 6, 7,
+var cellsizei = 3;     ///feel free to change this
 var flourishlimit = 16;///feel free to change this
-var timeout = 100;
+var timeout = 100;     ///feel free to change this
 var timeoutincrem = 20;///feel free to change this
 var timeoutmax = 500;  ///feel free to change this
-var generation = 0;
+var cellsize = cellsizes[cellsizei];
 var pitch = width/cellsize;
 var c;///canvas drawing context
+document.getElementById("cellsizeout").value = cellsize+"px";
+document.getElementById("timeoutout").value = timeout+"ms";
 
+///feel free to change these colors
 var borncolor        = "#A6E";
 var twoneighcolor    = "#6AE";
 var threeneightcolor = "#6DB";
 var drawncolor       = "#66E";
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
-
-var mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
+var generation=0, mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
@@ -168,11 +169,53 @@ document.getElementById("horsymButton").onclick = function () {
 		horsym = 0;
 	}
 }
+function resetcellsize() {
+	var newcellsize = cellsizes[cellsizei];
+	var newpitch = width/newcellsize;
+	var newarraylength = newpitch*(height/newcellsize);
+	var newcells = [];
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	c = document.getElementById('gridcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	c.fillStyle = drawncolor;
+	if (newarraylength>arraylength) {///smaller
+		for (var i=0; i<height/cellsize; i++) {
+			for (var j=0; j<pitch; j++) {
+				newcells[ j + (newpitch-pitch)/2 + ( i + (height/newcellsize - height/cellsize)/2 )*newpitch ] = cells[ j + i*pitch ];
+				if ( cells[ j + i*pitch ] ) {
+					c.fillRect( ( j + (newpitch-pitch)/2 )*newcellsize, ( i + (height/newcellsize - height/cellsize)/2 )*newcellsize, newcellsize,newcellsize );
+				}
+			}
+		}
+	}
+	else {///bigger
+		for (var i=0; i<height/newcellsize; i++) {
+			for (var j=0; j<newpitch; j++) {
+				newcells[ j + i*newpitch ] = cells[ j + (pitch-newpitch)/2 + ( i + (height/cellsize - height/newcellsize)/2 )*pitch ];
+				if ( newcells[ j + i*newpitch ] ) {
+					c.fillRect( j*newcellsize, i*newcellsize, newcellsize,newcellsize );
+				}
+			}
+		}
+	}
+	cellsize = newcellsize;
+	pitch = newpitch;
+	arraylength = newarraylength;
+	cells = newcells;
+	document.getElementById("cellsizeout").value = cellsize+"px";
+}
 document.getElementById("smallerButton").onclick = function () {
-	
+	if (cellsizei != 0) {
+		cellsizei--;
+		resetcellsize();
+	}
 }
 document.getElementById("biggerButton").onclick = function () {
-	
+	if (cellsizei < cellsizes.length-1) {
+		cellsizei++;
+		resetcellsize();
+	}
 }
 document.getElementById("slowerButton").onclick = function () {
 	timeout += timeoutincrem;
@@ -185,11 +228,6 @@ document.getElementById("fasterButton").onclick = function () {
 	document.getElementById("timeoutout").value = timeout+"ms";
 }
 
-
-function fillcell(i) { 
-	c = document.getElementById('gridcanvas').getContext('2d');
-	c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
-}
 
 function loop() {
 	if (!paused) {
@@ -218,27 +256,28 @@ function loop() {
 				}
 				else {
 					c.fillStyle = neighborcounts[i]==2 ? twoneighcolor : threeneightcolor;
-					fillcell(i);
+					c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 					//console.log(i + " lived");
 				}
 			}
 			else if (neighborcounts[i]==3) {
 				cells[i] = 1;
 				c.fillStyle = borncolor;
-				fillcell(i);
+				c.fillRect( (i%pitch)*cellsize, Math.floor(i/pitch)*cellsize, cellsize, cellsize );
 				//console.log(i + " born");
 			}
 		}
-		//reset
+		///reset
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
+		
+		//if (cellsize != cellsizes[cellsizei]) resetcellsize();
 		
 		if (stepped) {
 			stepped = 0;
 			paused = 1;
 		}
-		
-		window.setTimeout(loop, timeout);
+		else window.setTimeout(loop, timeout);
 	}
 }
 

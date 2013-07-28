@@ -2,7 +2,6 @@
  * 
  * 
  * ::to do::
- * bigger,smaller (get common divisors for width and height)
  * 
  * ::questions::
  * why can't I change the text on the buttons?
@@ -15,9 +14,9 @@ function init() {
 
 var width = 800;   ///if you change this, change cellsizes and relevant css values accordingly
 var height = 600;  ///if you change this, change cellsizes and relevant css values accordingly
-var cellsizes = [1,2,4,5,10,20,25,50,100]; ///some common divisors of width and height, the remainders of which are even
-             /// 0,1,2,3,4, 5, 6, 7, 8
-var cellsizei = 4;     ///feel free to change this
+var cellsizes = [2,4,5,10,20,25,50,100]; ///some common divisors of width and height, the remainders of which are even
+             /// 0,1,2,3, 4, 5, 6, 7,
+var cellsizei = 3;     ///feel free to change this
 var flourishlimit = 16;///feel free to change this
 var timeout = 100;     ///feel free to change this
 var timeoutincrem = 20;///feel free to change this
@@ -28,14 +27,14 @@ var c;///canvas drawing context
 document.getElementById("cellsizeout").value = cellsize+"px";
 document.getElementById("timeoutout").value = timeout+"ms";
 
-///feel free to change these
+///feel free to change these colors
 var borncolor        = "#A6E";
 var twoneighcolor    = "#6AE";
 var threeneightcolor = "#6DB";
 var drawncolor       = "#66E";
 var curcolor = "rgba(40, 40, 40, 0.4)";
 
-var generation=0, mousedown=0, paused=0, stepped=0, erase=0, vertsym=0, horsym=0;
+var generation=0, mousedown=0, paused=0, stepped=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
@@ -57,11 +56,11 @@ var findcur = function(evt) {
 	cursey = Math.floor( (evt.clientY - top  + window.pageYOffset)/cellsize );
 }
 function dab(x, y) {
-	cells[ x + y*pitch ] = erase ? 0 : 1;
-	if (horsym) cells[ x + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
-	if (vertsym) cells[ pitch-x-1 + y*pitch ] = erase ? 0 : 1;
-	if (horsym && vertsym) cells[ pitch-x-1 + arraylength - y*pitch - pitch ] = erase ? 0 : 1;
-	if (!erase){
+	cells[ x + y*pitch ] = cells[ x + y*pitch ] ? 0 : 1;
+	if (horsym) cells[ x + arraylength - y*pitch - pitch ] = cells[ x + arraylength - y*pitch - pitch ] ? 0 : 1;
+	if (vertsym) cells[ pitch-x-1 + y*pitch ] = cells[ pitch-x-1 + y*pitch ] ? 0 : 1;
+	if (horsym && vertsym) cells[ pitch-x-1 + arraylength - y*pitch - pitch ] = cells[ pitch-x-1 + arraylength - y*pitch - pitch ] ? 0 : 1;
+	if ( cells[ x + y*pitch ] ) {
 		c.fillStyle = drawncolor;
 		c.fillRect( x*cellsize, y*cellsize, cellsize, cellsize );
 		if (horsym) c.fillRect( x*cellsize, height - cellsize - y*cellsize, cellsize, cellsize );
@@ -98,12 +97,10 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 			c = document.getElementById('gridcanvas').getContext('2d');
 			dab(cursex, cursey);
 			///flourish on drag
-			if (!erase) {
-				for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) dab(cursex-i, cursey);
-				for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) dab(cursex+i, cursey);
-				for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) dab(previouscursex, cursey-i);
-				for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) dab(previouscursex, cursey+i);
-			}
+			for (var i=1; i<cursex-previouscursex && i<flourishlimit; i++) dab(cursex-i, cursey);
+			for (var i=1; i<previouscursex-cursex && i<flourishlimit; i++) dab(cursex+i, cursey);
+			for (var i=1; i<cursey-previouscursey && i<flourishlimit; i++) dab(previouscursex, cursey-i);
+			for (var i=1; i<previouscursey-cursey && i<flourishlimit; i++) dab(previouscursex, cursey+i);
 		}
 		previouscursex = cursex;
 		previouscursey = cursey;
@@ -134,9 +131,6 @@ document.getElementById("stepButton").onclick = function () {
 		paused = 0;
 		loop();
 	}
-}
-document.getElementById("eraseButton").onclick = function () {
-	erase = erase ? 0 : 1;
 }
 document.getElementById("clearButton").onclick = function () {
 	for (var i=0; i<arraylength; i++) {
