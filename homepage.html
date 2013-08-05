@@ -13,6 +13,12 @@
 
 <body onload="init();">
 	
+	<div id="about" class="center">
+		<a href="http://en.wikipedia.org/wiki/Conways_Game_of_Life"/>
+				about
+		</a>
+	</div>
+	
 	<div id="cancan" class="center">
 		<div id="horsymbar"></div>
 		<div id="vertsymbar"></div>
@@ -21,33 +27,29 @@
 	</div>
 	
 	<div id="controls" class="center">
-		<input type="button" class="button"  id="pauseButton"   value="play/pause"/>
-		<input type="button" class="button"  id="stepButton"    value="step"/>
-		<input type="button" class="button"  id="clearButton"   value="clear"/>
-		<input type="button" class="button"  id="vertsymButton" value="vert.sym."/>
-		<input type="button" class="button"  id="horsymButton"  value="hor.sym."/>
-		<input type="button" class="button"  id="smallerButton" value="smaller"/>
-		<input type="button" class="button"  id="biggerButton"  value="bigger"/>
-		<input type="text"   class="textout" id="cellsizeout"   value="10px" disabled="disabled"/>
-		<input type="button" class="button"  id="slowerButton"  value="slower"/>
-		<input type="button" class="button"  id="fasterButton"  value="faster"/>
-		<input type="text"   class="textout" id="timeoutout"    value="100ms" disabled="disabled"/>
+		<input id="pauseButton"   type="button" class="button"  value="pause"     style="margin-left:0px; margin-right:0px; width:54px;"/>
+		<input id="stepButton"    type="button" class="button"  value="step"      style="margin-left:0px; margin-right:4px;"/>
+		<input id="clearButton"   type="button" class="button"  value="clear"     style="margin-left:4px; margin-right:4px;"/>
+		<input id="vertsymButton" type="button" class="button"  value="vert.sym." style="margin-left:4px; margin-right:0px;"/>
+		<input id="horsymButton"  type="button" class="button"  value="hor.sym."  style="margin-left:0px; margin-right:4px;"/>
+		<input id="smallerButton" type="button" class="button"  value="smaller"   style="margin-left:4px; margin-right:0px;"/>
+		<input id="biggerButton"  type="button" class="button"  value="bigger"    style="margin-left:0px; margin-right:0px;"/>
+		<input id="cellsizeout"   type="text"   class="textout" value="10px"      style="margin-left:0px; margin-right:4px; width:40px" disabled="disabled" />
+		<input id="slowerButton"  type="button" class="button"  value="slower"    style="margin-left:4px; margin-right:0px;"/>
+		<input id="fasterButton"  type="button" class="button"  value="faster"    style="margin-left:0px; margin-right:0px;"/>
+		<input id="timeoutout"    type="text"   class="textout" value="100ms"     style="margin-left:0px; margin-right:0px; width:54px;" disabled="disabled"/>
 	</div>
 
 	<div class="frontlink">
-		<h4 style="text-align: right;">
-			<a href="mailto:JonArintok@Gmail.com"/>
-				JonArintok@Gmail.com
-			</a>
-		</h>
+		<a href="mailto:JonArintok@Gmail.com"/>
+			<h4>JonArintok@Gmail.com</h>
+		</a>
 	</div>
 	
 	<div class="frontlink">
-		<h4 style="text-align: right;">
-			<a href="https://github.com/DinosaurBlanket"/>
-				github.com/DinosaurBlanket
-			</a>
-		</h>
+		<a href="https://github.com/DinosaurBlanket"/>
+			<h4>github.com/DinosaurBlanket</h>
+		</a>
 	</div>
 	
 	<div class="center" id="foot">

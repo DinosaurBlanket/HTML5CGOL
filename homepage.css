@@ -23,24 +23,29 @@ body {
 	width: 500px;
 	left: 50%;
 	margin-left: -100px;
-	margin-top: 20px;
+	margin-top: 10px;
+	text-align: right;
 }
 .button {
+	font-family: Verdana;
 	background: #FFF;
 	color: #67D;
 	border-style: none;
-	font-weight: bold;
 }
 .textout {
+	font-family: Verdana;
 	background: #FFF;
 	color: #678;
 	border-style: none;
-	width: 50px;
+}
+#about {
+	text-align: right;
+	margin-top: 40px;
 }
 #cancan {
 	background: #FFF;
 	height: 600px;
-	margin-top: 40px;
+	margin-top: 10px;
 }
 #horsymbar {
 	background: #BBB;
@@ -79,7 +84,6 @@ body {
 
 #foot {
 	padding-top: 10px;
-	padding-bottom: 10px;
 }
 
 a:link    {

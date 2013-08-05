@@ -4,7 +4,6 @@
  * ::to do::
  * 
  * ::questions::
- * why can't I change the text on the buttons?
  * why can't i cache "document.getElementById('...').getContext('2d')"
  * how can i get rid of the text cursor when dragging in chrome?
  */
@@ -14,8 +13,8 @@ function init() {
 
 var width = 800;   ///if you change this, change cellsizes and relevant css values accordingly
 var height = 600;  ///if you change this, change cellsizes and relevant css values accordingly
-var cellsizes = [2,4,5,10,20,25,50,100]; ///some common divisors of width and height, the remainders of which are even
-             /// 0,1,2,3, 4, 5, 6, 7,
+var cellsizes = [2,4,5,10,20,25,50]; ///some common divisors of width and height, the remainders of which are even
+             /// 0,1,2,3, 4, 5, 6
 var cellsizei = 3;     ///feel free to change this
 var flourishlimit = 16;///feel free to change this
 var timeout = 100;     ///feel free to change this
@@ -28,11 +27,12 @@ document.getElementById("cellsizeout").value = cellsize+"px";
 document.getElementById("timeoutout").value = timeout+"ms";
 
 ///feel free to change these colors
-var borncolor        = "#A6E";
+var borncolor        = "#88E";
 var twoneighcolor    = "#6AE";
-var threeneightcolor = "#6DB";
+var threeneightcolor = "#6DD";
 var drawncolor       = "#66E";
-var curcolor = "rgba(40, 40, 40, 0.4)";
+var curcolor          ="rgba(40, 40, 40, 0.5)";
+var curcolorreflected ="rgba(40, 40, 40, 0.3)";
 
 var generation=0, mousedown=0, paused=0, stepped=0, vertsym=0, horsym=0;
 var cells = [], neighborcounts = [];
@@ -81,6 +81,7 @@ stampcanvas.addEventListener("mousemove", function(evt) {
 		c.fillStyle = curcolor;
 		c.fillRect( cursex*cellsize, cursey*cellsize, cellsize, cellsize );
 		c.clearRect( previouscursex*cellsize, previouscursey*cellsize, cellsize, cellsize );
+		c.fillStyle = curcolorreflected;
 		if (horsym) {
 			c.fillRect( cursex*cellsize, height - cellsize - cursey*cellsize, cellsize, cellsize );
 			c.clearRect( previouscursex*cellsize, height - cellsize - previouscursey*cellsize, cellsize, cellsize );
@@ -119,11 +120,15 @@ stampcanvas.addEventListener("mouseup", function(evt) {
 document.getElementById("pauseButton").onclick = function () {
 	if (paused) {
 		paused = 0;
+		document.getElementById("pauseButton").value = "pause";
 		c = document.getElementById('stampcanvas').getContext('2d');
 		c.clearRect(0, 0, width, height);
 		loop();
 	}
-	else paused = 1;
+	else {
+		paused = 1;
+		document.getElementById("pauseButton").value = "play";
+	}
 }
 document.getElementById("stepButton").onclick = function () {
 	if (paused) {
@@ -133,10 +138,7 @@ document.getElementById("stepButton").onclick = function () {
 	}
 }
 document.getElementById("clearButton").onclick = function () {
-	for (var i=0; i<arraylength; i++) {
-		cells[i] = 0;
-		//neighborcounts[i] = 0;
-	}
+	for (var i=0; i<arraylength; i++) cells[i] = 0;
 	c = document.getElementById('gridcanvas').getContext('2d');
 	c.clearRect(0,0,width,height);
 }
@@ -265,8 +267,6 @@ function loop() {
 		///reset
 		for (var i=0; i<arraylength; i++) neighborcounts[i] = 0;
 		generation++;
-		
-		//if (cellsize != cellsizes[cellsizei]) resetcellsize();
 		
 		if (stepped) {
 			stepped = 0;
