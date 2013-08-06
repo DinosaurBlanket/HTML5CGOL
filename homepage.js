@@ -1,10 +1,6 @@
 /* 
  * 
  * 
- * ::to do::
- * 
- * ::questions::
- * why can't i cache "document.getElementById('...').getContext('2d')"
  * how can i get rid of the text cursor when dragging in chrome?
  */
 
@@ -34,7 +30,7 @@ var drawncolor       = "#66E";
 var curcolor          ="rgba(40, 40, 40, 0.5)";
 var curcolorreflected ="rgba(40, 40, 40, 0.3)";
 
-var generation=0, mousedown=0, paused=0, stepped=0, vertsym=0, horsym=0;
+var generation=mousedown=paused=stepped=vertsym=horsym=0;
 var cells = [], neighborcounts = [];
 var arraylength = pitch*(height/cellsize);
 for (var i=0; i<arraylength; i++) {
@@ -117,55 +113,7 @@ stampcanvas.addEventListener("mouseup", function(evt) {
 	mousedown = 0;
 }, 0);
 
-document.getElementById("pauseButton").onclick = function () {
-	if (paused) {
-		paused = 0;
-		document.getElementById("pauseButton").value = "pause";
-		c = document.getElementById('stampcanvas').getContext('2d');
-		c.clearRect(0, 0, width, height);
-		loop();
-	}
-	else {
-		paused = 1;
-		document.getElementById("pauseButton").value = "play";
-	}
-}
-document.getElementById("stepButton").onclick = function () {
-	if (paused) {
-		stepped = 1;
-		paused = 0;
-		loop();
-	}
-}
-document.getElementById("clearButton").onclick = function () {
-	for (var i=0; i<arraylength; i++) cells[i] = 0;
-	c = document.getElementById('gridcanvas').getContext('2d');
-	c.clearRect(0,0,width,height);
-}
-document.getElementById("vertsymButton").onclick = function () {
-	c = document.getElementById('stampcanvas').getContext('2d');
-	c.clearRect(0,0, width,height);
-	if (!vertsym) {
-		document.getElementById("vertsymbar").style.visibility="visible";
-		vertsym = 1;
-	}
-	else {
-		document.getElementById("vertsymbar").style.visibility="hidden";
-		vertsym = 0;
-	}
-}
-document.getElementById("horsymButton").onclick = function () {
-	c = document.getElementById('stampcanvas').getContext('2d');
-	c.clearRect(0,0, width,height);
-	if (!horsym) {
-		document.getElementById("horsymbar").style.visibility="visible";
-		horsym = 1;
-	}
-	else {
-		document.getElementById("horsymbar").style.visibility="hidden";
-		horsym = 0;
-	}
-}
+
 function resetcellsize() {
 	var newcellsize = cellsizes[cellsizei];
 	var newpitch = width/newcellsize;
@@ -202,29 +150,119 @@ function resetcellsize() {
 	cells = newcells;
 	document.getElementById("cellsizeout").value = cellsize+"px";
 }
-document.getElementById("smallerButton").onclick = function () {
+
+var pauseButton = function() {
+	if (paused) {
+		paused = 0;
+		document.getElementById("pauseButton").value = "pause";
+		c = document.getElementById('stampcanvas').getContext('2d');
+		c.clearRect(0, 0, width, height);
+		loop();
+	}
+	else {
+		paused = 1;
+		document.getElementById("pauseButton").value = "play";
+	}
+}
+var stepButton = function() {
+	if (paused) {
+		stepped = 1;
+		paused = 0;
+		loop();
+	}
+}
+var clearButton = function() {
+	for (var i=0; i<arraylength; i++) cells[i] = 0;
+	c = document.getElementById('gridcanvas').getContext('2d');
+	c.clearRect(0,0,width,height);
+}
+var vertsymButton = function() {
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	if (!vertsym) {
+		document.getElementById("vertsymbar").style.visibility="visible";
+		vertsym = 1;
+	}
+	else {
+		document.getElementById("vertsymbar").style.visibility="hidden";
+		vertsym = 0;
+	}
+}
+var horsymButton = function() {
+	c = document.getElementById('stampcanvas').getContext('2d');
+	c.clearRect(0,0, width,height);
+	if (!horsym) {
+		document.getElementById("horsymbar").style.visibility="visible";
+		horsym = 1;
+	}
+	else {
+		document.getElementById("horsymbar").style.visibility="hidden";
+		horsym = 0;
+	}
+}
+var smallerButton = function() {
 	if (cellsizei != 0) {
 		cellsizei--;
 		resetcellsize();
 	}
 }
-document.getElementById("biggerButton").onclick = function () {
+var biggerButton = function() {
 	if (cellsizei < cellsizes.length-1) {
 		cellsizei++;
 		resetcellsize();
 	}
 }
-document.getElementById("slowerButton").onclick = function () {
+var slowerButton = function() {
 	timeout += timeoutincrem;
 	if (timeout > timeoutmax) timeout = timeoutmax;
 	document.getElementById("timeoutout").value = timeout+"ms";
 }
-document.getElementById("fasterButton").onclick = function () {
+var fasterButton = function() {
 	timeout -= timeoutincrem;
 	if (timeout < 0) timeout = 0;
 	document.getElementById("timeoutout").value = timeout+"ms";
 }
-
+document.getElementById("pauseButton").onclick = pauseButton;
+document.getElementById("stepButton").onclick = stepButton;
+document.getElementById("clearButton").onclick = clearButton;
+document.getElementById("vertsymButton").onclick = vertsymButton;
+document.getElementById("horsymButton").onclick = horsymButton;
+document.getElementById("smallerButton").onclick = smallerButton;
+document.getElementById("biggerButton").onclick = biggerButton;
+document.getElementById("slowerButton").onclick = slowerButton;
+document.getElementById("fasterButton").onclick = fasterButton;
+window.onkeydown = function() {
+	switch (window.event.keyCode) {
+		case 90:///z
+			pauseButton();
+			break;
+		case 88:///x
+			stepButton();
+			break;
+		case 67:///c
+			clearButton();
+			break;
+		case 86:///v
+			vertsymButton();
+			break;
+		case 66:///b
+			horsymButton();
+			break;
+		case 78:///n
+			smallerButton();
+			break;
+		case 77:///m
+			biggerButton();
+			break;
+		case 188:///,
+			slowerButton();
+			break;
+		case 190:///.
+			fasterButton();
+			break;
+	}
+}
+document.onselectstart = function(){ return false; }///this is to prevent the text cursor from coming up in certain browsers
 
 function loop() {
 	if (!paused) {

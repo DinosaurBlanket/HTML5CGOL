@@ -80,7 +80,9 @@ body {
 #controls {
 	margin-top: 10px;
 }
-
+#controlKeys {
+	font-size: 75%
+}
 #foot {
 	padding-top: 10px;
 }
