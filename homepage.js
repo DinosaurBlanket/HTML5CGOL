@@ -17,7 +17,7 @@ var cellsizes = [2,4,5,10,20,25,50]; ///some common divisors of width and height
              /// 0,1,2,3, 4, 5, 6
 var cellsizei = 3;     ///feel free to change this
 var flourishlimit = 16;///feel free to change this
-var timeout = 100;     ///feel free to change this
+var timeout = 120;     ///feel free to change this
 var timeoutincrem = 20;///feel free to change this
 var timeoutmax = 500;  ///feel free to change this
 var cellsize = cellsizes[cellsizei];
@@ -275,6 +275,7 @@ function loop() {
 		else window.setTimeout(loop, timeout);
 	}
 }
+
 
 loop();
 
