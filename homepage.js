@@ -1,7 +1,5 @@
-/* 
- * 
- * 
- * how can i get rid of the text cursor when dragging in chrome?
+/* Copyright 2013 Jonathan Arintok
+ * This program is distributed under the terms of the GNU General Public License
  */
 
 function init() {
@@ -248,16 +246,16 @@ window.onkeydown = function() {
 		case 66:///b
 			horsymButton();
 			break;
-		case 78:///n
+		case 65:///a
 			smallerButton();
 			break;
-		case 77:///m
+		case 83:///s
 			biggerButton();
 			break;
-		case 188:///,
+		case 68:///d
 			slowerButton();
 			break;
-		case 190:///.
+		case 70:///f
 			fasterButton();
 			break;
 	}
