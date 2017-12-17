@@ -3,7 +3,7 @@
 
 body {
 	background: #BBB;
-	font-family: Verdana;
+	font-family: sans-serif;
 	color: #FFF;
 }
 .center {
@@ -97,4 +97,3 @@ a:active  {
 	color: #67D;
 	text-decoration: none;
 }
-
