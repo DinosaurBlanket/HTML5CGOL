@@ -21,13 +21,13 @@ body {
 	text-align: right;
 }
 .button {
-	font-family: Verdana;
+	font-family: sans-serif;
 	background: #FFF;
 	color: #67D;
 	border-style: none;
 }
 .textout {
-	font-family: Verdana;
+	font-family: sans-serif;
 	background: #FFF;
 	color: #678;
 	border-style: none;
